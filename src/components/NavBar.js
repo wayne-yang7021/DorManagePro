@@ -102,7 +102,7 @@ const Navbar = () => {
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
-            About
+            Apply for transfer
           </a>
         </li>
 
@@ -113,7 +113,7 @@ const Navbar = () => {
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
-            Contact
+            Account
           </a>
         </li>
       </ul>
