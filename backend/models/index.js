@@ -1,9 +1,9 @@
 const { drizzle } = require('drizzle-orm/node-postgres');
 const { Pool } = require('pg');
-const fs = require('fs'); // 引入 Node.js 文件系統模組
+// const fs = require('fs'); // 引入 Node.js 文件系統模組
+require('dotenv').config(); // 加載 .env 文件
 
-// 從 db.password.txt 讀取密碼
-const password = fs.readFileSync('./db.password.txt', 'utf-8').trim(); // 讀取檔案並去除多餘空白字符
+const password = process.env.DB_PASSWORDS; // 從環境變量中獲取密碼
 
 // 設定 PostgreSQL 連接池
 const pool = new Pool({

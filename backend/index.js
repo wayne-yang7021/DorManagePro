@@ -15,53 +15,15 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Login endpoint with database verification
-app.post('/api/login', async (req, res) => {
-  const { student_id, ssn } = req.body;
+// Routes
+const userRoutes = require('./routes/user'); // 包含 auth, register, student_search
+const dormRoutes = require('./routes/dorm'); // 包含 dorm_facility, facility_schedule, snack
 
-  try {
-    // Verify user credentials against the database
-    const foundUser = await db.select()
-      .from(user)
-      .where(
-        and(
-          eq(user.studentId, student_id),
-          eq(user.ssn, ssn)
-        )
-      )
-      .get();
+// User-related routes (auth, register, student_search)
+app.use('/api/user', userRoutes);
 
-    if (!foundUser) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // Generate token with user information
-    const payload = { 
-      userId: foundUser.ssn, 
-      studentId: foundUser.studentId 
-    };
-    const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
-
-    // Set secure, HTTP-only cookie
-    res.cookie('authToken', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 3600000 // 1 hour
-    });
-
-    res.json({ 
-      message: 'Login successful', 
-      user: { 
-        studentId: foundUser.studentId, 
-        email: foundUser.email 
-      } 
-    });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login' });
-  }
-});
+// Dorm-related routes (facilities, facility_schedule, snacks)
+app.use('/api/dorm', dormRoutes);
 
 // User info endpoint with token verification
 app.get('/api/user', async (req, res) => {
