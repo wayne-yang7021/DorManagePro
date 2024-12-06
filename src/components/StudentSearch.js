@@ -1,53 +1,57 @@
 import React, { useState } from 'react';
 
 function StudentSearch() {
-    // const [studentId, setStudentId] = useState('');
-    // const [studentData, setStudentData] = useState(null);
-    // const [error, setError] = useState('');
-
-    // const handleSearch = async (e) => {
-    //     e.preventDefault();
-
-    //     try {
-    //         const response = await fetch(`/api/students/${studentId}`);
-    //         if (!response.ok) {
-    //             throw new Error('Student not found');
-    //         }
-    //         const data = await response.json();
-    //         setStudentData(data);
-    //         setError('');
-    //     } catch (err) {
-    //         setStudentData(null);
-    //         setError(err.message);
-    //     }
-    // };
     // 假資料
     const dummyData = [
-        { id: '1', name: 'Alice Chen', room: '101A', contact: '0912345678' },
-        { id: '2', name: 'Bob Lin', room: '102B', contact: '0922345678' },
-        { id: '3', name: 'Cathy Wang', room: '103C', contact: '0932345678' },
-        { id: '4', name: 'David Lee', room: '104D', contact: '0942345678' },
-        { id: '5', name: 'Emma Huang', room: '105E', contact: '0952345678' },
+        { id: '1', name: 'Alice Chen', room: '101A', B_id: 'C202', contact: '0912345678' },
+        { id: '2', name: 'Bob Lin', room: '102B', B_id: 'C203', contact: '0922345678' },
+        { id: '3', name: 'Cathy Wang', room: '103C', B_id: 'C204', contact: '0932345678' },
+        { id: '4', name: 'David Lee', room: '104D', B_id: 'C205', contact: '0942345678' },
+        { id: '5', name: 'Emma Huang', room: '105E', B_id: 'C206', contact: '0952345678' },
     ];
 
     const [studentId, setStudentId] = useState('');
+    const [B_id, setB_id] = useState('');
     const [studentData, setStudentData] = useState(null);
     const [error, setError] = useState('');
 
     const handleSearch = (e) => {
         e.preventDefault();
-
-        // 從假資料中查詢
-        const foundStudent = dummyData.find(student => student.id === studentId);
-        if (foundStudent) {
-            setStudentData(foundStudent);
+    
+        if (!studentId && !B_id) {
+            setStudentData(null);
+            setError('請至少輸入一個查詢條件');
+            return;
+        }
+    
+        let results = dummyData;
+    
+        // 如果兩個條件都存在，取交集
+        if (studentId && B_id) {
+            results = dummyData.filter(
+                student => student.id === studentId && student.B_id === B_id
+            );
+        } else if (studentId) {
+            // 只有 studentId
+            results = dummyData.filter(
+                student => student.id === studentId
+            );
+        } else if (B_id) {
+            // 只有 B_id
+            results = dummyData.filter(
+                student => student.B_id === B_id
+            );
+        }
+    
+        if (results.length > 0) {
+            setStudentData(results);
             setError('');
         } else {
             setStudentData(null);
-            setError('找不到該學生');
+            setError('找不到符合條件的學生');
         }
     };
-
+    
 
     // 定義內嵌樣式
     const styles = {
@@ -114,7 +118,18 @@ function StudentSearch() {
                         style={styles.input}
                         value={studentId}
                         onChange={(e) => setStudentId(e.target.value)}
-                        placeholder="請輸入學生 ID"
+                        placeholder="請輸入學生 ID (可留空)"
+                    />
+                </div>
+                <div style={styles.formGroup}>
+                    <label htmlFor="B_id" style={styles.label}>B_id</label>
+                    <input
+                        type="text"
+                        id="B_id"
+                        style={styles.input}
+                        value={B_id}
+                        onChange={(e) => setB_id(e.target.value)}
+                        placeholder="請輸入 B_id (可留空)"
                     />
                 </div>
                 <button
@@ -129,15 +144,15 @@ function StudentSearch() {
 
             {error && <div style={styles.alert}>{error}</div>}
 
-            {studentData && (
-                <div style={styles.card}>
+            {studentData && studentData.map(student => (
+                <div style={styles.card} key={student.id}>
                     <h5>學生資料</h5>
-                    <p><strong>姓名：</strong>{studentData.name}</p>
-                    <p><strong>學號：</strong>{studentData.id}</p>
-                    <p><strong>房號：</strong>{studentData.room}</p>
-                    <p><strong>聯絡方式：</strong>{studentData.contact}</p>
+                    <p><strong>姓名：</strong>{student.name}</p>
+                    <p><strong>學號：</strong>{student.id}</p>
+                    <p><strong>宿舍號：</strong>{student.B_id}</p>
+                    <p><strong>聯絡方式：</strong>{student.contact}</p>
                 </div>
-            )}
+            ))}
         </div>
     );
 }
