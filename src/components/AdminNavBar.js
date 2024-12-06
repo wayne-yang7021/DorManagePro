@@ -1,14 +1,11 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/authContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
   const styles = {
     navbar: {
       display: "flex",
@@ -89,7 +86,7 @@ const Navbar = () => {
       >
         <li>
           <a
-            href="/"
+            href="/admin"
             style={styles.link}
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
@@ -99,12 +96,12 @@ const Navbar = () => {
         </li>
         <li>
           <a
-            href="/about"
+            href="/admin_information"
             style={styles.link}
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
-            Apply for transfer
+            Personal Information
           </a>
         </li>
 
@@ -115,7 +112,7 @@ const Navbar = () => {
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
-            {user.name}
+            Contact
           </a>
         </li>
       </ul>
