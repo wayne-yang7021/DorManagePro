@@ -29,7 +29,6 @@ const bed = pgTable('bed', {
   bId: varchar('b_id', 50).primaryKey(),
   dormId: varchar('dorm_id', 50).notNull(),
   ssn: varchar('ssn', 50), // 外鍵指向 USER
-  password: varchar('password', 100),
   roomNumber: varchar('room_number', 50).notNull(),
 });
 
