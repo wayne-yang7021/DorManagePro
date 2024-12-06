@@ -2,7 +2,7 @@ const { pgTable, serial, varchar, text, integer, boolean, timestamp, date } = re
 
 // ADMIN 表
 const admin = pgTable('admin', {
-  ssn: varchar('ssn', 50).primaryKey(),
+  ssn: varchar('ssn', 100).primaryKey(),
   username: varchar('username', 100).notNull(),
   password: varchar('password', 100).notNull(),
   dormId: varchar('dorm_id', 50).notNull(),
@@ -12,15 +12,16 @@ const admin = pgTable('admin', {
 
 // USER 表
 const user = pgTable('user', {
-  ssn: varchar('ssn', 20).primaryKey(),
-  username: varchar('username', 100).notNull(),
-  password: varchar('password', 100).notNull(),
+  ssn: varchar('ssn', 100).primaryKey(),
+  // username: varchar('username', 100).notNull(),
+  // password: varchar('password', 100).notNull(), // 不加密密碼
   studentId: varchar('student_id', 50).notNull(),
   bId: varchar('b_id', 50), // 外鍵指向 BED
   phone: varchar('phone', 20),
   email: varchar('email', 100),
   dormId: varchar('dorm_id', 50).notNull(),
   dueDate: date('due_date'),
+  sessionToken: text('session_token'), // 用於存儲會話令牌
 });
 
 // BED 表
@@ -34,7 +35,7 @@ const bed = pgTable('bed', {
 
 // MOVE_RECORD 表
 const moveRecord = pgTable('move_record', {
-  ssn: varchar('ssn', 50).notNull().references(() => user.ssn), // 外鍵指向 USER
+  ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   bId: varchar('b_id', 50).notNull().references(() => bed.bId), // 外鍵指向 BED
   moveInDate: date('move_in_date').notNull(),
   moveOutDate: date('move_out_date'),
@@ -42,7 +43,7 @@ const moveRecord = pgTable('move_record', {
 
 // MOVE_APPLICATION 表
 const moveApplication = pgTable('move_application', {
-  ssn: varchar('ssn', 50).notNull().references(() => user.ssn), // 外鍵指向 USER
+  ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   applyId: serial('apply_id').primaryKey(),
   semester: varchar('semester', 20).notNull(),
   dormId: varchar('dorm_id', 50).notNull(),
@@ -52,14 +53,14 @@ const moveApplication = pgTable('move_application', {
 
 // SNACK_RECORD 表
 const snackRecord = pgTable('snack_record', {
-  ssn: varchar('ssn', 50).notNull().references(() => user.ssn), // 外鍵指向 USER
+  ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   semester: varchar('semester', 20).notNull(),
   dormId: varchar('dorm_id', 50).notNull(),
 });
 
 // SNACK_OPTION 表
 const snackOption = pgTable('snack_option', {
-  ssn: varchar('ssn', 50).notNull().references(() => user.ssn), // 外鍵指向 USER
+  ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   semester: varchar('semester', 20).notNull(),
   dormId: varchar('dorm_id', 50).notNull(),
   sName: varchar('s_name', 100).notNull(),
@@ -76,7 +77,7 @@ const facility = pgTable('facility', {
 
 // BOOK_RECORD 表
 const bookRecord = pgTable('book_record', {
-  ssn: varchar('ssn', 50).notNull().references(() => user.ssn), // 外鍵指向 USER
+  ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   fId: integer('f_id').notNull().references(() => facility.fId), // 外鍵指向 FACILITY
   isCancelled: boolean('is_cancelled').default(false),
   bookTime: timestamp('book_time').defaultNow(),
@@ -84,7 +85,7 @@ const bookRecord = pgTable('book_record', {
 
 // MAINTENANCE_RECORD 表
 const maintenanceRecord = pgTable('maintenance_record', {
-  ssn: varchar('ssn', 50).notNull().references(() => user.ssn), // 外鍵指向 USER
+  ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   description: text('description').notNull(),
   fixedDate: date('fixed_date'),
   isFinished: boolean('is_finished').default(false),
