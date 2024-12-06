@@ -1,8 +1,8 @@
 import React from 'react';
 import AdminNavbar from '../components/AdminNavBar';
-import StudentSearch from '../components/StudentSearch';
+import StudentInfoSearch from '../components/StudentInfoSearch';
 import SnackAnnouncement from '../components/SnackAnnouncement';
-import DormChangeRequest from '../components/DormChangeRequest';
+import DormChangeRequestSearch from '../components/DormChangeRequestSearch';
 import SnackReservationStatus from '../components/SnackReservationStatus';
 
 function Admin() {
@@ -10,11 +10,11 @@ function Admin() {
     return (
         <div>
             <AdminNavbar />
-            <div className="mt-4">
-                <StudentSearch />
-                <SnackAnnouncement/>
-                <DormChangeRequest/>
-                <SnackReservationStatus/>
+            <div>
+                <StudentInfoSearch />
+                <SnackAnnouncement />
+                <DormChangeRequestSearch />
+                <SnackReservationStatus />
             </div>
         </div>
     );
