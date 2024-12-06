@@ -4,59 +4,77 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // Loading state for initialization
+    const [loading, setLoading] = useState(true);
 
-    // Check for persisted user on app load
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            fetchUser(token);
-        } else {
-            setLoading(false); // No token, stop loading
-        }
+        // Check authentication on initial load
+        checkAuthentication();
     }, []);
 
-    const fetchUser = async (token) => {
+    const checkAuthentication = async () => {
         try {
-            const response = await fetch('/api/auth/user', {
-                headers: { Authorization: `Bearer ${token}` },
+            const response = await fetch('http://localhost:8888/api/user', {
+                credentials: 'include'
             });
+
             if (response.ok) {
                 const userData = await response.json();
                 setUser(userData);
             } else {
-                localStorage.removeItem('authToken'); // Clear invalid token
+                setUser(null);
             }
+            setLoading(false);
         } catch (error) {
-            console.error('Failed to fetch user:', error);
-        } finally {
+            console.error('Authentication check failed:', error);
+            setUser(null);
             setLoading(false);
         }
     };
 
-    const login = async (email, password) => {
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        });
+    const login = async (student_id, ssn) => {
+        try {
+            const response = await fetch('http://localhost:8888/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include', // Important for sending cookies
+                body: JSON.stringify({ student_id, ssn }),
+            });
 
-        if (response.ok) {
-            const { token, userData } = await response.json();
-            localStorage.setItem('authToken', token);
-            setUser(userData);
-        } else {
-            throw new Error('Login failed');
+            if (response.ok) {
+                const userData = await response.json();
+                await checkAuthentication();
+                return true;
+            } else {
+                throw new Error('Login failed');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed. Please check your credentials.');
+            return false;
         }
     };
 
-    const logout = () => {
+    const logout = async () => {
+        try {
+            // Optional: Implement a backend logout endpoint to invalidate token
+            await fetch('http://localhost:8888/api/logout', { 
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
         setUser(null);
-        localStorage.removeItem('authToken');
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ 
+            user, 
+            login, 
+            logout, 
+            loading,
+            isAuthenticated: !!user 
+        }}>
             {children}
         </AuthContext.Provider>
     );

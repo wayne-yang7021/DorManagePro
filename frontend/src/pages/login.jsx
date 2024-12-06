@@ -8,13 +8,14 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if(login(email, password)){
-            console.log("login_successful")
-            navigate('/')
-        }else {
-            console.log("error login")
+    const handleSubmit = async (e) => {
+        e.preventDefault();  // Prevent form from submitting and refreshing the page
+        const success = await login(email, password);  // Call login and await response
+        if (success) {
+            console.log("Login successful");
+            navigate('/');  // Redirect to home page
+        } else {
+            console.log("Error logging in");
         }
     };
 
@@ -25,7 +26,6 @@ const LoginPage = () => {
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>Email:</label>
                     <input
-                        type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         style={styles.input}
