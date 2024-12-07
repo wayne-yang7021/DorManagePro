@@ -8,8 +8,15 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         // Check authentication on initial load
-        checkAuthentication();
-    }, []);
+        setLoading(true)
+        try {
+            checkAuthentication();
+        }catch{
+
+        }finally{
+            setLoading(false)
+        }
+    }, [user]);
 
     const checkAuthentication = async () => {
         try {
@@ -30,26 +37,33 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     };
-
     const login = async (student_id, ssn) => {
         try {
+            // Make POST request to backend to authenticate the user
             const response = await fetch('http://localhost:8888/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // Important for sending cookies
-                body: JSON.stringify({ student_id, ssn }),
+                credentials: 'include', // Important for sending cookies (JWT token)
+                body: JSON.stringify({ student_id, ssn }), // Sending data to backend
             });
-
+    
             if (response.ok) {
+                // If login is successful, process the response
                 const userData = await response.json();
+    
+                // Optionally, trigger authentication check to load user data
                 await checkAuthentication();
+    
+                // Inform that login was successful
                 return true;
             } else {
-                throw new Error('Login failed');
+                // If login failed, throw an error with specific message
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Login failed');
             }
         } catch (error) {
             console.error('Login error:', error);
-            alert('Login failed. Please check your credentials.');
+            alert(`Login failed: ${error.message}`); // Provide the error message to the user
             return false;
         }
     };

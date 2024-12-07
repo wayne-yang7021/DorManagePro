@@ -21,7 +21,7 @@ const user = pgTable('user', {
   email: varchar('email', 100),
   dormId: varchar('dorm_id', 50).notNull(),
   dueDate: date('due_date'),
-  sessionToken: text('session_token'), // 用於存儲會話令牌
+  sessionToken: text('sessiontoken'), // 用於存儲會話令牌
 });
 
 // BED 表

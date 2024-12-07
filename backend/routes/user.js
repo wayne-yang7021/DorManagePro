@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const db = require('../models/index'); // Drizzle DB 連接
-const { users,  bed } = require('../models/schema'); // Schema
+const { user,  bed } = require('../models/schema'); // Schema
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -16,12 +16,14 @@ router.post('/login', async (req, res) => {
       })
       .from(user)
       .where(user.studentId.eq(username))
-      .and(user.ssn.eq(password))
       .limit(1);
 
+    console.log(user)
     if (user.length === 0 || user[0].password !== password) {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
+
+    console.log(user.ssn)
 
     // 生成會話令牌
     const token = `session-${Date.now()}-${Math.random()}`;

@@ -3,7 +3,7 @@ import { useAuth } from "../context/authContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  
+  const { user, loading } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -115,7 +115,7 @@ const Navbar = () => {
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
-            Account
+            {!loading && user ? user.studentId : "student id"}
           </a>
         </li>
       </ul>
