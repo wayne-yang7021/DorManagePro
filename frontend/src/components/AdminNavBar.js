@@ -1,11 +1,25 @@
 import React, { useState } from "react";
+import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { logout, admin, loading } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  const handleLogout = async() => {
+    const iflogout = await logout();
+    if(iflogout){
+      navigate('/adminLogin')
+    }else{
+      console.error("failed to logout")
+    }
+  }
+
   const styles = {
     navbar: {
       display: "flex",
@@ -112,7 +126,18 @@ const Navbar = () => {
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
-            Contact
+            {!loading && admin ? admin.email : "admin"}
+            </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+            onClick={handleLogout}
+          >
+            Logout
           </a>
         </li>
       </ul>

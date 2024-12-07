@@ -4,7 +4,7 @@ const { eq } = require('drizzle-orm');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const { getDb } = require('./models/index')
-const { user, bed } = require('./models/schema'); // Import your user schema
+const { user, bed, admin } = require('./models/schema'); // Import your user schema
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 
@@ -24,12 +24,16 @@ app.use(cookieParser());
 // Routes
 const userRoutes = require('./routes/user'); // 包含 auth, register, student_search
 const dormRoutes = require('./routes/dorm'); // 包含 dorm_facility, facility_schedule, snack
+const adminRoutes = require('./routes/admin')
 
 // User-related routes (auth, register, student_search)
 app.use('/api/user', userRoutes);
 
 // Dorm-related routes (facilities, facility_schedule, snacks)
 app.use('/api/dorm', dormRoutes);
+
+app.use('/api/admin', adminRoutes);
+
 
 app.post('/api/login', async (req, res) => {
   const db = getDb()
@@ -104,10 +108,25 @@ app.get('/api/user', async (req, res) => {
       email: foundUser[0].email,
       phone: foundUser[0].phone,
       b_id: foundUser[0].b_id,
-      
+
     });
   } catch (error) {
     res.status(401).json({ message: 'Invalid or expired token' });
+  }
+});
+
+app.post('/api/logout', (req, res) => {
+  try {
+    // Clear the user's authentication cookie
+    res.clearCookie('authToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    res.status(200).json({ message: 'User logged out successfully' });
+  } catch (error) {
+    console.error('User logout error:', error);
+    res.status(500).json({ message: 'Server error during logout' });
   }
 });
 
