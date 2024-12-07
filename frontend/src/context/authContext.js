@@ -5,18 +5,20 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [admin, setAdmin] = useState(null); // Holds admin data
 
     useEffect(() => {
-        // Check authentication on initial load
-        setLoading(true)
+        // Check authentication for both user and admin on initial load
+        setLoading(true);
         try {
-            checkAuthentication();
-        }catch{
-
-        }finally{
-            setLoading(false)
+            Promise.all([checkAuthentication(), checkAdminAuthentication()]);
+        } catch {
+            // Handle any errors
+        } finally {
+            setLoading(false);
         }
     }, []);
+
 
     const checkAuthentication = async () => {
         try {
@@ -37,6 +39,26 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     };
+
+    // Check if an admin is authenticated
+    const checkAdminAuthentication = async () => {
+        try {
+            const response = await fetch('http://localhost:8888/api/admin/fetch', {
+                credentials: 'include',
+            });
+
+            if (response.ok) {
+                const adminData = await response.json();
+                setAdmin(adminData);
+            } else {
+                setAdmin(null);
+            }
+        } catch (error) {
+            console.error('Admin authentication check failed:', error);
+            setAdmin(null);
+        }
+    };
+    
     const login = async (student_id, ssn) => {
         try {
             // Make POST request to backend to authenticate the user
@@ -68,6 +90,31 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+
+    // Admin login
+    const loginAdmin = async (admin_email, password) => {
+        try {
+            const response = await fetch('http://localhost:8888/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ admin_email, password }),
+            });
+
+            if (response.ok) {
+                await checkAdminAuthentication();
+                return true;
+            } else {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Admin login failed');
+            }
+        } catch (error) {
+            console.error('Admin login error:', error);
+            alert(`Admin login failed: ${error.message}`);
+            return false;
+        }
+    };
+
     const logout = async () => {
         try {
             // Optional: Implement a backend logout endpoint to invalidate token
@@ -77,13 +124,19 @@ export const AuthProvider = ({ children }) => {
             });
         } catch (error) {
             console.error('Logout error:', error);
+            return false;
         }
         setUser(null);
+        return true;
+
+        
     };
 
     return (
         <AuthContext.Provider value={{ 
             user, 
+            admin,
+            loginAdmin,
             login, 
             logout, 
             loading,

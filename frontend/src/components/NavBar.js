@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, loading } = useAuth();
+  const { user, loading, logout, admin } = useAuth();
+  const navigate = useNavigate();
+
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handlelogout = () => {
+    logout()
+    navigate('/login')
   };
 
   const styles = {
@@ -110,12 +118,24 @@ const Navbar = () => {
 
         <li>
           <a
-            href="/contact"
+            href="#"
             style={styles.link}
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
             {!loading && user ? user.studentId : "student id"}
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+            onClick={handlelogout}
+          >
+            Logout
           </a>
         </li>
       </ul>

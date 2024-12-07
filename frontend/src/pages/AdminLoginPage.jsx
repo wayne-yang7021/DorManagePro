@@ -1,25 +1,31 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/authContext';
+import { useNavigate } from 'react-router-dom';
 
-const RegisterPage = () => {
-    const { login } = useAuth();
+const AdminLoginPage = () => {
+    const { loginAdmin } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const userData = { name: 'User', email }; // Example user data
-        login(userData);
+    const handleSubmit = async (e) => {
+        e.preventDefault();  // Prevent form from submitting and refreshing the page
+        const success = await loginAdmin(email, password);  // Call login and await response
+        if (success) {
+            console.log("Login successful");
+            navigate('/admin');  // Redirect to home page
+        } else {
+            console.log("Error logging in");
+        }
     };
 
     return (
         <div style={styles.container}>
-            <h2 style={styles.title}>Register</h2>
+            <h2 style={styles.title}>admin login</h2>
             <form onSubmit={handleSubmit} style={styles.form}>
                 <div style={styles.inputGroup}>
                     <label style={styles.label}>Email:</label>
                     <input
-                        type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         style={styles.input}
@@ -27,7 +33,7 @@ const RegisterPage = () => {
                     />
                 </div>
                 <div style={styles.inputGroup}>
-                    <label style={styles.label}>Password:</label>
+                    <label style={styles.label}>SSN:</label>
                     <input
                         type="password"
                         value={password}
@@ -40,7 +46,7 @@ const RegisterPage = () => {
             </form>
             <div style={styles.registerContainer}>
                 <p style={styles.registerText}>
-                    Already have an account?{' '}
+                    You are a student? {' '}
                     <a href="/login" style={styles.registerLink}>Login</a>
                 </p>
             </div>
@@ -110,4 +116,4 @@ const styles = {
     },
 };
 
-export default RegisterPage;
+export default AdminLoginPage;

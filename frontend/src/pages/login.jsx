@@ -24,7 +24,7 @@ const LoginPage = () => {
             <h2 style={styles.title}>Login</h2>
             <form onSubmit={handleSubmit} style={styles.form}>
                 <div style={styles.inputGroup}>
-                    <label style={styles.label}>Email:</label>
+                    <label style={styles.label}>Student ID:</label>
                     <input
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -33,7 +33,7 @@ const LoginPage = () => {
                     />
                 </div>
                 <div style={styles.inputGroup}>
-                    <label style={styles.label}>Password:</label>
+                    <label style={styles.label}>SSN:</label>
                     <input
                         type="password"
                         value={password}
@@ -46,8 +46,8 @@ const LoginPage = () => {
             </form>
             <div style={styles.registerContainer}>
                 <p style={styles.registerText}>
-                    Don't have an account yet?{' '}
-                    <a href="/register" style={styles.registerLink}>Register account</a>
+                    You're a admin?{' '}
+                    <a href="/adminLogin" style={styles.registerLink}>admin login</a>
                 </p>
             </div>
         </div>

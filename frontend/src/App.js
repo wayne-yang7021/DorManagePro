@@ -7,8 +7,8 @@ import Contact from './pages/Contact';
 import AdminInformation from './pages/AdminInformation';
 import { AuthProvider } from './context/authContext';
 import LoginPage from './pages/login';
-import RegisterPage from './pages/Register';
 import { MyProvider } from './context/context';
+import AdminLoginPage from './pages/AdminLoginPage';
 
 function App() {
     return (
@@ -25,7 +25,7 @@ function App() {
                             <Route path="/info/:id" element={<Contact/ >}/>
                             <Route path="/admin_information" element={<AdminInformation />} />
                             <Route path="/login" element={<LoginPage/>} />
-                            <Route path="/register" element={<RegisterPage/>} />
+                            <Route path="/adminLogin" element={<AdminLoginPage/>} />
                         </Routes>
                     </main>
                 </div>
