@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const db = require('../models/index'); // Drizzle DB 連接
+const { getDb } = require('../models/index'); // 正確導入 getDb 函數
 const { user,  bed } = require('../models/schema'); // Schema
+const { eq } = require('drizzle-orm');
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -38,48 +39,19 @@ router.post('/login', async (req, res) => {
 });
 
 
-// 根據 student_id 和 room_id 搜尋學生
-router.get('/student_search', async (req, res) => {
-  try {
-    const { student_id, room_id } = req.query;
-    const result = await db
-      .select({
-        student_id: users.studentId,
-        room_id: bed.roomNumber,
-        username: users.username,
-        email: users.email,
-        phone: users.phone,
-      })
-      .from(users)
-      .innerJoin(bed, bed.bId.eq(users.bId))
-      .where(users.studentId.eq(student_id).and(bed.roomNumber.eq(room_id)))
-      .limit(1);
-
-    if (result.length === 0) {
-      return res.status(404).json({ error: 'Student not found' });
-    }
-
-    res.json(result[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
 // Dorm Change Request - 宿舍變更請求
- 
 router.get('/dorm_change_request', async (req, res) => {
   try {
     const { username, student_id } = req.query;
     const result = await db
       .select({
-        username: users.username,
-        student_id: users.studentId,
-        original_dorm: users.dormId,
-        b_id: users.bId,
+        username: user.username,
+        student_id: user.studentId,
+        original_dorm: user.dormId,
+        b_id: user.bId,
       })
-      .from(users)
-      .where(users.username.eq(username).and(users.studentId.eq(student_id)))
+      .from(user)
+      .where(user.username.eq(username).and(users.studentId.eq(student_id)))
       .limit(1);
 
     if (result.length === 0) {

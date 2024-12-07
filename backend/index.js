@@ -22,14 +22,18 @@ app.use(cookieParser());
 
 
 // Routes
-const userRoutes = require('./routes/user'); // 包含 auth, register, student_search
+const userRoutes = require('./routes/user'); // 包含 auth, register
 const dormRoutes = require('./routes/dorm'); // 包含 dorm_facility, facility_schedule, snack
+const adminRoutes = require('./routes/admin'); // 包含 student_search, snack_announcement
 
 // User-related routes (auth, register, student_search)
 app.use('/api/user', userRoutes);
 
 // Dorm-related routes (facilities, facility_schedule, snacks)
 app.use('/api/dorm', dormRoutes);
+
+// Admin-related routes 
+app.use('/api/admin', adminRoutes);
 
 app.post('/api/login', async (req, res) => {
   const db = getDb()
@@ -43,7 +47,7 @@ app.post('/api/login', async (req, res) => {
   try {
       // Check if the user exists in the database and compare SSN
       const foundUser = await db.select().from(user).where(eq(user.studentId, student_id)).limit(1);
-      console.log(foundUser)
+      // console.log(foundUser)
       if (!foundUser) {
           return res.status(404).json({ message: 'User not found' });
       }
@@ -96,7 +100,7 @@ app.get('/api/user', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    console.log(foundUser)
+    // console.log(foundUser)
 
     res.json({
       studentId: foundUser[0].studentId,

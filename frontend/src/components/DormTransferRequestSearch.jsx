@@ -1,23 +1,33 @@
 import React, { useState } from 'react';
 
-function DormChangeRequestSearch() {
-    const dummyData = [
-        { id: '1', name: 'Alice Chen', originalDorm: 'A', roomNumber: '101' },
-        { id: '2', name: 'Bob Lin', originalDorm: 'B', roomNumber: '202' },
-        { id: '3', name: 'Cathy Wang', originalDorm: 'C', roomNumber: '303' },
-        { id: '4', name: 'David Lee', originalDorm: 'D', roomNumber: '404' },
-        { id: '5', name: 'Emma Huang', originalDorm: 'E', roomNumber: '505' },
-    ];
-
+function DormTransferRequestSearch() {
     const [searchDorm, setSearchDorm] = useState('');
-    const [filteredRequests, setFilteredRequests] = useState(dummyData);
+    const [studentData, setStudentData] = useState([]);
+    const [error, setError] = useState('');
 
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
-        const results = dummyData.filter(
-            (request) => request.originalDorm.toUpperCase() === searchDorm.toUpperCase()
-        );
-        setFilteredRequests(results);
+        if (!searchDorm) {
+            setStudentData([]);
+            setError('Please enter a dorm id to search.');
+            return;
+        }
+        try {
+            const response = await fetch(
+                `http://localhost:8888/api/admin/dorm_transfer_request_search?origin_dorm_id=${searchDorm}`
+            );
+
+            if (!response.ok) {
+                throw new Error('Request not found');
+            }
+
+            const data = await response.json();
+            setStudentData(data); // 不包裝成陣列，直接存取
+            setError('');
+        } catch (err) {
+            setStudentData([]);
+            setError(err.message || 'An error occurred');
+        }
     };
 
     const styles = {
@@ -75,14 +85,14 @@ function DormChangeRequestSearch() {
             <h2>Search Dorm Change Requests</h2>
             <form onSubmit={handleSearch}>
                 <div style={styles.formGroup}>
-                    <label htmlFor="searchDorm">Original Dorm (e.g., A, B, C)</label>
+                    <label htmlFor="searchDorm">Original Dorm (e.g., DORM02)</label>
                     <input
                         type="text"
                         id="searchDorm"
                         style={styles.input}
                         value={searchDorm}
                         onChange={(e) => setSearchDorm(e.target.value)}
-                        placeholder="Enter dorm letter to search"
+                        placeholder="Enter dorm ID to search"
                     />
                 </div>
                 <button type="submit" style={styles.button}>
@@ -90,23 +100,23 @@ function DormChangeRequestSearch() {
                 </button>
             </form>
 
-            {filteredRequests.length > 0 ? (
+            {error && <p style={styles.noData}>{error}</p>}
+
+            {studentData.length > 0 ? (
                 <table style={styles.table}>
                     <thead>
                         <tr>
-                            <th style={styles.th}>Student Name</th>
                             <th style={styles.th}>Student ID</th>
                             <th style={styles.th}>Original Dorm</th>
-                            <th style={styles.th}>Room Number</th>
+                            <th style={styles.th}>Applying Dorm</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredRequests.map((request) => (
-                            <tr key={request.id}>
-                                <td style={styles.td}>{request.name}</td>
-                                <td style={styles.td}>{request.id}</td>
-                                <td style={styles.td}>{request.originalDorm}</td>
-                                <td style={styles.td}>{request.roomNumber}</td>
+                        {studentData.map((request, index) => (
+                            <tr key={index}>
+                                <td style={styles.td}>{request.student_id}</td>
+                                <td style={styles.td}>{request.origin_dorm}</td>
+                                <td style={styles.td}>{request.applying_dorm}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -118,4 +128,4 @@ function DormChangeRequestSearch() {
     );
 }
 
-export default DormChangeRequestSearch;
+export default DormTransferRequestSearch;

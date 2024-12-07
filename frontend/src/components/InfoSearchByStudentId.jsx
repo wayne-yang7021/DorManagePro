@@ -1,51 +1,33 @@
 import React, { useState } from 'react';
 
-function StudentInfoSearch() {
-    const dummyData = [
-        { id: '1', name: 'Alice Chen', room: '202', B_id: '202C', contact: '0912345678' },
-        { id: '2', name: 'Bob Lin', room: '203', B_id: '203C', contact: '0922345678' },
-        { id: '3', name: 'Cathy Wang', room: '204', B_id: '204C', contact: '0932345678' },
-        { id: '4', name: 'David Lee', room: '205', B_id: '205C', contact: '0942345678' },
-        { id: '5', name: 'Emma Huang', room: '206', B_id: '206C', contact: '0952345678' },
-        { id: '6', name: 'Howard Pang', room: '206', B_id: '206D', contact: '0952345678' },
-    ];
-
+function InfoSearchByStudentId() {
     const [studentId, setStudentId] = useState('');
-    const [B_id, setB_id] = useState('');
     const [studentData, setStudentData] = useState(null);
     const [error, setError] = useState('');
 
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
-    
-        if (!studentId && !B_id) {
+        if (!studentId) {
             setStudentData(null);
-            setError('Please enter at least one search condition.');
+            setError('Please enter a student ID to search.');
             return;
         }
-    
-        let results = dummyData;
-    
-        if (studentId && B_id) {
-            results = dummyData.filter(
-                student => student.id === studentId && student.B_id === B_id
+
+        try {
+            const response = await fetch(
+                `http://localhost:8888/api/admin/student_search?student_id=${studentId}`
             );
-        } else if (studentId) {
-            results = dummyData.filter(
-                student => student.id === studentId
-            );
-        } else if (B_id) {
-            results = dummyData.filter(
-                student => student.B_id === B_id
-            );
-        }
-    
-        if (results.length > 0) {
-            setStudentData(results);
+            
+            if (!response.ok) {
+                throw new Error('Student not found');
+            }
+
+            const data = await response.json();
+            setStudentData([data]); // 包裝成陣列以便渲染
             setError('');
-        } else {
+        } catch (err) {
             setStudentData(null);
-            setError('No matching student found.');
+            setError(err.message || 'An error occurred');
         }
     };
 
@@ -103,7 +85,7 @@ function StudentInfoSearch() {
 
     return (
         <div style={styles.container}>
-            <h2>Search Student Information</h2>
+            <h2>Search Student Information by Student ID</h2>
             <form onSubmit={handleSearch} style={{ marginBottom: '20px' }}>
                 <div style={styles.formGroup}>
                     <label htmlFor="studentId" style={styles.label}>Student ID</label>
@@ -113,18 +95,7 @@ function StudentInfoSearch() {
                         style={styles.input}
                         value={studentId}
                         onChange={(e) => setStudentId(e.target.value)}
-                        placeholder="Enter Student ID (optional)"
-                    />
-                </div>
-                <div style={styles.formGroup}>
-                    <label htmlFor="B_id" style={styles.label}>B_id</label>
-                    <input
-                        type="text"
-                        id="B_id"
-                        style={styles.input}
-                        value={B_id}
-                        onChange={(e) => setB_id(e.target.value)}
-                        placeholder="Enter B_id (optional)"
+                        placeholder="Enter Student ID"
                     />
                 </div>
                 <button
@@ -140,17 +111,15 @@ function StudentInfoSearch() {
             {error && <div style={styles.alert}>{error}</div>}
 
             {studentData && studentData.map(student => (
-                <div style={styles.card} key={student.id}>
+                <div style={styles.card} key={student.student_id}>
                     <h5>Student Details</h5>
-                    <p><strong>Name:</strong> {student.name}</p>
-                    <p><strong>Student ID:</strong> {student.id}</p>
-                    <p><strong>Room:</strong> {student.room}</p>
-                    <p><strong>B_id:</strong> {student.B_id}</p>
-                    <p><strong>Contact:</strong> {student.contact}</p>
+                    <p><strong>Student ID:</strong> {student.student_id}</p>
+                    <p><strong>Email:</strong> {student.email}</p>
+                    <p><strong>Contact:</strong> {student.phone}</p>
                 </div>
             ))}
         </div>
     );
 }
 
-export default StudentInfoSearch;
+export default InfoSearchByStudentId;

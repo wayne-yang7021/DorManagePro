@@ -1,10 +1,9 @@
 const { drizzle } = require('drizzle-orm/node-postgres');
 const { Pool } = require('pg');
-const { user } = require('./schema')
+// const { user } = require('./schema')
 // const fs = require('fs'); // 引入 Node.js 文件系統模組
 require('dotenv').config(); // 加載 .env 文件
 
-const password = process.env.DB_PASSWORDS; // 從環境變量中獲取密碼
 
 // // 設定 PostgreSQL 連接池
 // const pool = new Pool({
@@ -22,6 +21,7 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
+
 
 let db; // Define a variable to hold the Drizzle instance
 
