@@ -88,20 +88,19 @@ router.get('/snack_options', async (req, res) => {
   }
 });
 // Dorm Change Request - 宿舍變更請求
- 
 router.get('/dorm_change_request', async (req, res) => {
   try {
     const db = getDb();
     const { username, student_id } = req.query;
     const result = await db
       .select({
-        username: users.username,
-        student_id: users.studentId,
-        original_dorm: users.dormId,
-        b_id: users.bId,
+        username: user.username,
+        student_id: user.studentId,
+        original_dorm: user.dormId,
+        b_id: user.bId,
       })
-      .from(users)
-      .where(users.username.eq(username).and(users.studentId.eq(student_id)))
+      .from(user)
+      .where(user.username.eq(username).and(users.studentId.eq(student_id)))
       .limit(1);
 
     if (result.length === 0) {

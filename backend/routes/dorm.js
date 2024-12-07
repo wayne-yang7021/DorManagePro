@@ -34,23 +34,6 @@ router.get('/facility_schedule', async (req, res) => {
 });
 
 
-//Snack Announcement - 發佈零食公告
-router.post('/snack_announcement', async (req, res) => {
-  const { semester, dorm_id, snack_name } = req.body;
-
-  try {
-    // 新增零食選項
-    await db.insert(snackOption).values({
-      semester,
-      dormId: dorm_id,
-      sName: snack_name,
-    });
-
-    res.status(201).json({ message: 'Snack announcement created successfully' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 //Snack Reservation Status - 獲取零食預約情況
 router.get('/snack_reservation_status', async (req, res) => {

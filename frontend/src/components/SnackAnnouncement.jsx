@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 
 function SnackAnnouncement() {
-    const [snacks, setSnacks] = useState([]); // Stores all snack items
+    const [snacks, setSnacks] = useState([]); // Stores all snack items locally
     const [newSnacks, setNewSnacks] = useState(''); // Tracks the input for snack names
+    const [semester, setSemester] = useState(''); // Tracks the input for semester
+    const [dormId, setDormId] = useState(''); // Tracks the input for dorm ID
     const [error, setError] = useState('');
-
-    const handleAddSnacks = (e) => {
+    const [success, setSuccess] = useState('');
+    const ssn = 'a12345678'
+    const handleAddSnacks = async (e) => {
         e.preventDefault();
 
         // Validate input
+        if (!semester.trim() || !dormId.trim()) {
+            setError('Please enter semester and dorm ID.');
+            return;
+        }
+
         if (!newSnacks.trim()) {
             setError('Please enter at least one snack name.');
             return;
@@ -17,18 +25,44 @@ function SnackAnnouncement() {
         // Split input snack names by commas
         const snacksToAdd = newSnacks
             .split(',')
-            .map(snack => snack.trim()) // Trim whitespace
-            .filter(snack => snack); // Avoid empty entries
+            .map(snack => snack.trim())
+            .filter(snack => snack);
 
         if (snacksToAdd.length === 0) {
             setError('Please enter valid snack names.');
             return;
         }
 
-        // Add to existing snack list
-        setSnacks([...snacks, ...snacksToAdd]);
-        setNewSnacks(''); // Clear input field
-        setError('');
+        try {
+            // Send POST request to the backend
+            for (const snack of snacksToAdd) {
+                const response = await fetch('http://localhost:8888/api/admin/snack_announcement', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ssn: ssn,
+                        semester: semester,
+                        dorm_id: dormId,
+                        snack_name: snack,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to announce snack: ' + snack);
+                }
+            }
+
+            // Update local state and reset form
+            setSnacks([...snacks, ...snacksToAdd]);
+            setNewSnacks('');
+            setError('');
+            setSuccess('Snack announcement created successfully!');
+        } catch (err) {
+            setError(err.message || 'An error occurred');
+            setSuccess('');
+        }
     };
 
     const styles = {
@@ -71,6 +105,14 @@ function SnackAnnouncement() {
             borderRadius: '4px',
             marginTop: '10px',
         },
+        success: {
+            color: '#155724',
+            backgroundColor: '#d4edda',
+            padding: '10px',
+            border: '1px solid #c3e6cb',
+            borderRadius: '4px',
+            marginTop: '10px',
+        },
         list: {
             listStyleType: 'none',
             paddingLeft: 0,
@@ -86,6 +128,28 @@ function SnackAnnouncement() {
         <div style={styles.container}>
             <h2>Add Snack Announcement</h2>
             <form onSubmit={handleAddSnacks}>
+                <div style={styles.formGroup}>
+                    <label htmlFor="semester">Semester</label>
+                    <input
+                        type="text"
+                        id="semester"
+                        style={styles.input}
+                        value={semester}
+                        onChange={(e) => setSemester(e.target.value)}
+                        placeholder="Enter semester, e.g., 2024-Spring"
+                    />
+                </div>
+                <div style={styles.formGroup}>
+                    <label htmlFor="dormId">Dorm ID</label>
+                    <input
+                        type="text"
+                        id="dormId"
+                        style={styles.input}
+                        value={dormId}
+                        onChange={(e) => setDormId(e.target.value)}
+                        placeholder="Enter dorm ID, e.g., Dorm A"
+                    />
+                </div>
                 <div style={styles.formGroup}>
                     <label htmlFor="snackInput">Snack Names (separate with commas)</label>
                     <input
@@ -108,6 +172,7 @@ function SnackAnnouncement() {
             </form>
 
             {error && <div style={styles.alert}>{error}</div>}
+            {success && <div style={styles.success}>{success}</div>}
 
             <h3>Snack Announcements</h3>
             <ul style={styles.list}>
