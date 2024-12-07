@@ -1,9 +1,8 @@
-
 const express = require('express');
 const router = express.Router();
 const { eq, and } = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
-const { user,  bed, snackOption, admin } = require('../models/schema'); // Schema
+const { user,  bed , snackOption, moveRecord, moveApplication, admin} = require('../models/schema'); // Schema
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
@@ -94,9 +93,6 @@ router.post('/login', async (req, res) => {
       res.status(500).json({ message: 'Server error during logout' });
     }
   });
-
-
-const { user,  bed , snackOption, moveRecord, moveApplication} = require('../models/schema'); // Schema
 
 // 根據 student_id 搜尋學生
 router.get('/student_search', async (req, res) => {
