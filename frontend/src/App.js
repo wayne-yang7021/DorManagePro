@@ -8,10 +8,12 @@ import AdminInformation from './pages/AdminInformation';
 import { AuthProvider } from './context/authContext';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/Register';
+import { MyProvider } from './context/context';
 
 function App() {
     return (
             <AuthProvider>
+            <MyProvider>
             <Router>
                 <div className="min-h-screen bg-custom-primary">
                     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -28,6 +30,7 @@ function App() {
                     </main>
                 </div>
             </Router>
+            </MyProvider>
             </AuthProvider>
     );
 }

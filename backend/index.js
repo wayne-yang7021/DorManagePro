@@ -100,8 +100,11 @@ app.get('/api/user', async (req, res) => {
 
     res.json({
       studentId: foundUser[0].studentId,
+      dormId: foundUser[0].dormId,
       email: foundUser[0].email,
-      phone: foundUser[0].phone
+      phone: foundUser[0].phone,
+      b_id: foundUser[0].b_id,
+      
     });
   } catch (error) {
     res.status(401).json({ message: 'Invalid or expired token' });

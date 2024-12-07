@@ -3,8 +3,8 @@ const { pgTable, serial, varchar, text, integer, boolean, timestamp, date } = re
 // ADMIN 表
 const admin = pgTable('admin', {
   ssn: varchar('ssn', 100).primaryKey(),
-  username: varchar('username', 100).notNull(),
-  password: varchar('password', 100).notNull(),
+  // username: varchar('username', 100).notNull(),
+  // password: varchar('password', 100).notNull(),
   dormId: varchar('dorm_id', 50).notNull(),
   email: varchar('email', 100),
   phone: varchar('phone', 20),
@@ -21,7 +21,7 @@ const user = pgTable('user', {
   email: varchar('email', 100),
   dormId: varchar('dorm_id', 50).notNull(),
   dueDate: date('due_date'),
-  sessionToken: text('sessiontoken'), // 用於存儲會話令牌
+  sessionToken: text('session_token'), // 用於存儲會話令牌
 });
 
 // BED 表
@@ -44,7 +44,7 @@ const moveRecord = pgTable('move_record', {
 const moveApplication = pgTable('move_application', {
   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   applyId: serial('apply_id').primaryKey(),
-  semester: varchar('semester', 20).notNull(),
+  semester: varchar('semester', 20).notNull().references(() => semester.semester), // 外鍵指向 SEMESTER
   dormId: varchar('dorm_id', 50).notNull(),
   applyTime: timestamp('apply_time').defaultNow(),
   status: varchar('status', 20).notNull(),
@@ -53,14 +53,14 @@ const moveApplication = pgTable('move_application', {
 // SNACK_RECORD 表
 const snackRecord = pgTable('snack_record', {
   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
-  semester: varchar('semester', 20).notNull(),
+  semester: varchar('semester', 20).notNull().references(() => semester.semester), // 外鍵指向 SEMESTER
   dormId: varchar('dorm_id', 50).notNull(),
 });
 
 // SNACK_OPTION 表
 const snackOption = pgTable('snack_option', {
-  ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
-  semester: varchar('semester', 20).notNull(),
+  ssn: varchar('ssn', 100).notNull().references(() => admin.ssn), // 外鍵指向 USER
+  semester: varchar('semester', 20).notNull().references(() => semester.semester), // 外鍵指向 SEMESTER
   dormId: varchar('dorm_id', 50).notNull(),
   sName: varchar('s_name', 100).notNull(),
 });
@@ -88,6 +88,10 @@ const maintenanceRecord = pgTable('maintenance_record', {
   description: text('description').notNull(),
   fixedDate: date('fixed_date'),
   isFinished: boolean('is_finished').default(false),
+});
+
+const semester = pgTable('semester', {  // 學期表 
+  semester: varchar('semester', 20).primaryKey(), // 紀錄「年度-學期」 ex: 113-1
 });
 
 module.exports = {

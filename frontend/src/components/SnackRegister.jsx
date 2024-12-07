@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useMyContext } from '../context/context';
 
 const snackEvents = [
   {
@@ -55,6 +56,11 @@ const SnackRegistration = () => {
   const [registrations, setRegistrations] = useState({});
   const [expandedEvents, setExpandedEvents] = useState({});
   const [selectedSnacks, setSelectedSnacks] = useState({});
+
+  const { snackOption, getSnackOption } = useMyContext();
+
+  console.log(snackOption)
+
 
   const handleRegistration = (eventId) => {
     setRegistrations(prev => ({

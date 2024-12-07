@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
         }finally{
             setLoading(false)
         }
-    }, [user]);
+    }, []);
 
     const checkAuthentication = async () => {
         try {

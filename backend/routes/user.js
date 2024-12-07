@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-
-const db = require('../models/index'); // Drizzle DB 連接
-const { user,  bed } = require('../models/schema'); // Schema
+const { eq, and } = require('drizzle-orm')
+const { getDb, db } = require('../models/index')
+const { user,  bed, snackOption } = require('../models/schema'); // Schema
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -38,9 +38,12 @@ router.post('/login', async (req, res) => {
 });
 
 
+
+
 // 根據 student_id 和 room_id 搜尋學生
 router.get('/student_search', async (req, res) => {
   try {
+    const db = getDb();
     const { student_id, room_id } = req.query;
     const result = await db
       .select({
@@ -65,11 +68,30 @@ router.get('/student_search', async (req, res) => {
   }
 });
 
-
+router.get('/snack_options', async (req, res) => {
+  try {
+    const db = getDb();
+    const { dormId, semester } = req.query;
+    console.log(dormId, semester)
+    const result = await db
+    .select()
+    .from(snackOption)
+    .where(and(eq(snackOption.dormId, dormId), eq(snackOption.semester, semester)));
+    console.log(result)
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Dorm change request not found' });
+    }
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err.message)
+    res.status(500).json({ error: err.message });
+  }
+});
 // Dorm Change Request - 宿舍變更請求
  
 router.get('/dorm_change_request', async (req, res) => {
   try {
+    const db = getDb();
     const { username, student_id } = req.query;
     const result = await db
       .select({
