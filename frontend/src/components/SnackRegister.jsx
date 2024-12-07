@@ -1,56 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMyContext } from '../context/context';
 
-const snackEvents = [
-  {
-    id: 1,
-    dorm: 1,
-    semester: 'Fall 2024',
-    title: 'Pizza Night',
-    description: 'Enjoy a variety of pizzas from local pizzeria',
-    date: 'September 15, 2024',
-    time: '7:00 PM',
-    maxParticipants: 50,
-    currentParticipants: 32,
-    snacks: ['Pepperoni Pizza', 'Vegetarian Pizza', 'Cheese Pizza']
-  },
-  {
-    id: 2,
-    dorm: 3,
-    semester: 'Fall 2024',
-    title: 'Dessert Extravaganza',
-    description: 'Sweet treats from local bakeries',
-    date: 'September 22, 2024',
-    time: '8:00 PM',
-    maxParticipants: 40,
-    currentParticipants: 25,
-    snacks: ['Chocolate Cake', 'Apple Pie', 'Brownies']
-  },
-  {
-    id: 3,
-    dorm: 5,
-    semester: 'Fall 2024',
-    title: 'International Snacks',
-    description: 'Taste snacks from around the world',
-    date: 'October 5, 2024',
-    time: '6:30 PM',
-    maxParticipants: 60,
-    currentParticipants: 45,
-    snacks: ['Japanese Mochi', 'Mexican Churros', 'Italian Cannoli']
-  },
-  {
-    id: 4,
-    dorm: 7,
-    semester: 'Fall 2024',
-    title: 'Healthy Snack Workshop',
-    description: 'Nutritious and delicious snack options',
-    date: 'October 12, 2024',
-    time: '7:30 PM',
-    maxParticipants: 30,
-    currentParticipants: 18,
-    snacks: ['Fruit Smoothies', 'Protein Balls', 'Veggie Chips']
-  }
-];
 
 const SnackRegistration = () => {
   const [registrations, setRegistrations] = useState({});
@@ -58,6 +8,35 @@ const SnackRegistration = () => {
   const [selectedSnacks, setSelectedSnacks] = useState({});
 
   const { snackOption, getSnackOption } = useMyContext();
+  const [snackEvents, setSnackEvents] = useState([]);
+
+useEffect(() => {
+
+  // Map for grouping the data
+  const snackMap = new Map();
+  snackOption.forEach(event => {
+    const { dormId, semester, sName, snackName } = event;
+    const key = `${dormId}-${semester}`;  // Create a unique key for each group
+
+    // If the key doesn't exist in the map, initialize it
+    if (!snackMap.has(key)) {
+      snackMap.set(key, {
+        id: snackMap.size + 1,  // Generate a unique id
+        dormId,
+        semester,
+        snacks: []
+      });
+    }
+
+    // Add the snackName to the corresponding snacks array
+    snackMap.get(key).snacks.push(sName);
+  });
+
+  // Convert the map to an array and set the state
+  const result = Array.from(snackMap.values());
+  setSnackEvents(result);  // Set the state with the transformed data
+
+}, [snackOption]);  // Empty dependency array to run once on component mount
 
   console.log(snackOption)
 
@@ -111,7 +90,7 @@ const SnackRegistration = () => {
               borderRadius: '8px', 
               padding: '20px', 
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              backgroundColor: registrations[event.id] ? '#e6f3e6' : 'white'
+              backgroundColor: registrations[event.semester] ? '#e6f3e6' : 'white'
             }}
           >
             <div style={{ 
@@ -127,7 +106,7 @@ const SnackRegistration = () => {
                   fontSize: '14px', 
                   color: '#6c757d' 
                 }}>
-                  {expandedEvents[event.id] ? '▲' : '▼'}
+                  {expandedEvents[event.semester] ? '▲' : '▼'}
                 </span>
               </h2>
               <span style={{ 
@@ -135,7 +114,7 @@ const SnackRegistration = () => {
                 padding: '5px 10px', 
                 borderRadius: '4px' 
               }}>
-                Dorm {event.dorm}
+                {event.dormId}
               </span>
             </div>
 

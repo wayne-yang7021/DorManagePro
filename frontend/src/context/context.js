@@ -14,10 +14,48 @@ const MyProvider = ({ children }) => {
 
     const { user } = useAuth();
     const [ snackOption, setSnackOption ] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+  
 
     useEffect(() => {
         getSnackOption();
     },[user])
+
+    const applyMaintenance = async (ssn, description) => {
+      setLoading(true);
+      setError('');
+      setSuccess('');
+  
+      try {
+        const response = await fetch('http://localhost:8888/api/user/maintenance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ssn, description }),
+        });
+  
+        const result = await response.json();
+  
+        if (response.ok) {
+          setSuccess('Maintenance request submitted successfully');
+        } else {
+          setError(result.message || 'Failed to submit the request');
+          setLoading(false)
+          return false
+        }
+      } catch (error) {
+        setError('Error submitting request');
+        setLoading(false)
+        return false
+      } finally {
+        setLoading(false);
+      }
+      return true;
+
+    };
 
     const getSnackOption = async () => {
         try {
@@ -46,7 +84,7 @@ const MyProvider = ({ children }) => {
       };
 
     return (
-        <MyContext.Provider value={{ snackOption, getSnackOption }}>
+        <MyContext.Provider value={{ snackOption, getSnackOption, applyMaintenance, loading,  }}>
             {children}
         </MyContext.Provider>
     );
