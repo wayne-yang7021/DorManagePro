@@ -118,7 +118,7 @@ const Navbar = () => {
 
         <li>
           <a
-            href="/contact"
+            href="#"
             style={styles.link}
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
