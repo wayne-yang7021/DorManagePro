@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-
+import { useAuth } from "../context/authContext";
 function DormTransferRequestSearch() {
     const [searchDorm, setSearchDorm] = useState('');
     const [studentData, setStudentData] = useState([]);
     const [error, setError] = useState('');
-
+    const {admin} = useAuth()
+    if (admin != null) {
+        const {email, phone} = admin
+        console.log(email)
+    }
     const handleSearch = async (e) => {
         e.preventDefault();
         if (!searchDorm) {
