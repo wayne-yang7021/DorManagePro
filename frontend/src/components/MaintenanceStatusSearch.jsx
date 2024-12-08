@@ -55,7 +55,6 @@ function MaintenanceStatus() {
             }
     
             const result = await response.json();
-            console.log(result);
     
             // 成功後更新前端狀態
             setMaintenanceData((prevData) =>

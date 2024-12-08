@@ -6,8 +6,8 @@ function DormTransferRequestSearch() {
     const [error, setError] = useState('');
     const {admin} = useAuth()
     if (admin != null) {
-        const {email, phone} = admin
-        console.log(email)
+        const {email, phone, ssn} = admin
+        console.log(ssn)
     }
     const handleSearch = async (e) => {
         e.preventDefault();
