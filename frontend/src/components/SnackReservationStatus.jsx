@@ -1,52 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/authContext';
+import SnackReserveSearchButton from './SnackReserveSearchButton';
 
 function SnackReservationStatus() {
-    // Dummy data
-    const dummyData = [
-        { snackName: 'French Fries', reservedCount: 10 },
-        { snackName: 'Chicken Nuggets', reservedCount: 20 },
-        { snackName: 'Cola', reservedCount: 15 },
-        { snackName: 'Burger', reservedCount: 25 },
-        { snackName: 'Ice Cream', reservedCount: 30 },
-    ];
-
     const [filteredReservations, setFilteredReservations] = useState([]);
+    const [semester, setSemester] = useState([]);
+    const [selectedSemester, setSelectedSemester] = useState('');
+    const [error, setError] = useState('');
     const [showResults, setShowResults] = useState(false);
+    const { admin } = useAuth();
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setFilteredReservations(dummyData); // Display all data as the result
-        setShowResults(true); // Show the results
-    };
+    useEffect(() => {
+        const fetchSemesterData = async () => {
+            try {
+                const response = await fetch('http://localhost:8888/api/admin/getSemester', {
+                    method: 'GET',
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setSemester(data);
+                } else {
+                    console.error('Failed to fetch semesters');
+                }
+            } catch (error) {
+                console.error('Error fetching semesters:', error);
+            }
+        };
+
+        fetchSemesterData();
+    }, []);
+
+    // 計算 snack 出現次數
+    const snackCount = filteredReservations.reduce((acc, reservation) => {
+        acc[reservation.snack] = (acc[reservation.snack] || 0) + 1;
+        return acc;
+    }, {});
+
+    // 將 snack 統計結果轉換為數組
+    const snackCountArray = Object.entries(snackCount).map(([snack, count]) => ({
+        snack,
+        count,
+    }));
 
     const styles = {
         container: {
             padding: '20px',
             width: '600px',
             maxWidth: '800px',
-            margin: '20px auto', // Center horizontally and vertically
+            margin: '20px auto',
             border: '1px solid #ddd',
             borderRadius: '8px',
             backgroundColor: '#f9f9f9',
         },
         formGroup: {
             marginBottom: '15px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
         },
-        input: {
-            width: '100%',
+        select: {
             padding: '8px',
-            marginTop: '5px',
             border: '1px solid #ccc',
             borderRadius: '4px',
         },
-        button: {
+        error: {
+            color: 'red',
             marginTop: '10px',
-            padding: '10px 15px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
         },
         table: {
             width: '100%',
@@ -72,27 +91,44 @@ function SnackReservationStatus() {
     return (
         <div style={styles.container}>
             <h2>Check Snack Reservation Status</h2>
-            <form onSubmit={handleSearch}>
-                <button type="submit" style={styles.button}>
-                    Search
-                </button>
-            </form>
+            <div style={styles.formGroup}>
+                <select
+                    style={styles.select}
+                    value={selectedSemester}
+                    onChange={(e) => setSelectedSemester(e.target.value)}
+                >
+                    <option value="">Choose Semester</option>
+                    {semester.map((s, index) => (
+                        <option key={index} value={s.semester}>
+                            {s.semester}
+                        </option>
+                    ))}
+                </select>
+                <SnackReserveSearchButton
+                    semester={selectedSemester.replace(/[()]/g, '')}
+                    admin={admin}
+                    setFilteredReservations={setFilteredReservations}
+                    setError={setError}
+                    setShowResults={setShowResults}
+                />
+            </div>
+            {error && <p style={styles.error}>{error}</p>}
 
             {showResults && (
                 <div>
-                    {filteredReservations.length > 0 ? (
+                    {snackCountArray.length > 0 ? (
                         <table style={styles.table}>
                             <thead>
                                 <tr>
                                     <th style={styles.th}>Snack Name</th>
-                                    <th style={styles.th}>Reserved Count</th>
+                                    <th style={styles.th}>Count</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredReservations.map((reservation, index) => (
+                                {snackCountArray.map((item, index) => (
                                     <tr key={index}>
-                                        <td style={styles.td}>{reservation.snackName}</td>
-                                        <td style={styles.td}>{reservation.reservedCount}</td>
+                                        <td style={styles.td}>{item.snack}</td>
+                                        <td style={styles.td}>{item.count}</td>
                                     </tr>
                                 ))}
                             </tbody>

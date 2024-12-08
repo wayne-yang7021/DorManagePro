@@ -34,8 +34,6 @@ router.post('/maintenance', async (req, res) => {
 
 
 
-
-
 // 根據 student_id 和 room_id 搜尋學生
 router.get('/student_search', async (req, res) => {
   try {

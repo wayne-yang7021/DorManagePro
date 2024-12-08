@@ -5,7 +5,7 @@ const { getDb, db } = require('../models/index')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
-const { user,  bed , snackOption, moveRecord, moveApplication, admin, maintenanceRecord} = require('../models/schema'); // Schema
+const { user,  bed , snackOption, semester, snackRecord, moveApplication, admin, maintenanceRecord} = require('../models/schema'); // Schema
 
 router.post('/login', async (req, res) => {
     const db = getDb();
@@ -160,6 +160,7 @@ router.get('/student_search', async (req, res) => {
 // Snack Announcement - 發佈零食公告
 router.post('/snack_announcement', async (req, res) => {
     const { ssn, semester, dorm_id, snack_name } = req.body;
+    console.log(ssn)
     try {
         const db = getDb();
         // 新增零食選項
@@ -182,14 +183,16 @@ router.post('/snack_announcement_search', async (req, res) => {
     console.log(semester, dorm_id)
     try {
         const db = getDb();
+        
         const result = await db
         .select({
-            semester: snackOption.semester,
-            snack: snackOption.sName
+            semester: snackRecord.semester,
+            snack: snackRecord.sName
         })
-        .from(snackOption)
-        .where(and(eq(snackOption.semester, semester), eq(snackOption.dormId, dorm_id))) 
-
+        .from(snackRecord)
+        .where(and(eq(snackRecord.semester, semester), eq(snackRecord.dormId, dorm_id))) 
+      
+      console.log(result)
       if (result.length === 0) {
         return res.status(404).json({ error: 'Snack anouncement not found' });
       }
@@ -199,6 +202,22 @@ router.post('/snack_announcement_search', async (req, res) => {
       res.status(500).json({ error: err.message });
     }
 });
+
+router.get('/getSemester', async(_, res) =>{
+    try{
+      const db = getDb();
+      const result = await db
+      .select()
+      .from(semester)
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: 'Semesters not found' });
+      }
+      res.json(result);
+    }catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+})
 
 // Dorm Transfer Request Search - 查詢宿舍變更請求
 router.get('/dorm_transfer_request_search', async (req, res) => {
