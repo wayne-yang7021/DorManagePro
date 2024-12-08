@@ -8,16 +8,20 @@ export const AuthProvider = ({ children }) => {
     const [admin, setAdmin] = useState(null); // Holds admin data
 
     useEffect(() => {
-        // Check authentication for both user and admin on initial load
-        setLoading(true);
-        try {
-            Promise.all([checkAuthentication(), checkAdminAuthentication()]);
-        } catch {
-            // Handle any errors
-        } finally {
-            setLoading(false);
-        }
+        const initializeAuth = async () => {
+            setLoading(true); // 確保初始狀態為加載中
+            try {
+                await Promise.all([checkAuthentication(), checkAdminAuthentication()]);
+            } catch (error) {
+                console.error("Initialization error:", error);
+            } finally {
+                setLoading(false); // 只有所有請求都完成後才設置為 false
+            }
+        };
+    
+        initializeAuth();
     }, []);
+    
 
 
     const checkAuthentication = async () => {
@@ -32,11 +36,9 @@ export const AuthProvider = ({ children }) => {
             } else {
                 setUser(null);
             }
-            setLoading(false);
         } catch (error) {
             console.error('Authentication check failed:', error);
             setUser(null);
-            setLoading(false);
         }
     };
 
