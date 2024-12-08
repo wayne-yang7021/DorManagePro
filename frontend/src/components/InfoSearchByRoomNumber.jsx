@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from "../context/authContext";
 
 function InfoSearchByRoomNumber() {
     const [roomNumber, setRoomNumber] = useState('');

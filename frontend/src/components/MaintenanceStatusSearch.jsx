@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
+import { useAuth } from "../context/authContext";
 
 function MaintenanceStatus() {
+    const {admin} = useAuth()
     const [searchDorm, setSearchDorm] = useState('');
     const [maintenanceData, setMaintenanceData] = useState([]);
     const [error, setError] = useState('');
     const [completionDate, setCompletionDate] = useState('');
+    const [showTable, setShowTable] = useState(true); // 控制表格顯示
+
+    // if (admin != null) {
+    //     console.log(admin)
+    // }
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        if (!searchDorm) {
-            setMaintenanceData([]);
-            setError('Please enter a dorm ID to search.');
-            return;
-        }
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/maintenance_status?dorm_id=${searchDorm}`
+                `http://localhost:8888/api/admin/maintenance_status?dorm_id=${admin.dorm_id}`
             );
-
             if (!response.ok) {
                 throw new Error('Request not found');
             }
@@ -29,7 +30,6 @@ function MaintenanceStatus() {
             setMaintenanceData([]);
             setError(err.message || 'An error occurred');
         }
-        console.log(maintenanceData);
     };
 
     const handleUpdate = async (record) => {
@@ -74,70 +74,10 @@ function MaintenanceStatus() {
     
     
 
-    const styles = {
-        container: {
-            padding: '20px',
-            maxWidth: '800px',
-            margin: '20px auto',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            backgroundColor: '#f9f9f9',
-        },
-        formGroup: {
-            marginBottom: '20px',
-        },
-        input: {
-            width: '80%',
-            padding: '8px',
-            marginTop: '5px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-        },
-        button: {
-            marginTop: '10px',
-            padding: '10px 15px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-        },
-        table: {
-            width: '100%',
-            borderCollapse: 'collapse',
-            marginTop: '20px',
-        },
-        th: {
-            border: '1px solid #ddd',
-            padding: '10px',
-            backgroundColor: '#f2f2f2',
-            textAlign: 'left',
-        },
-        td: {
-            border: '1px solid #ddd',
-            padding: '10px',
-        },
-        noData: {
-            marginTop: '20px',
-            color: '#555',
-        },
-    };
-
     return (
         <div style={styles.container}>
-            <h2>Maintenance Status</h2>
+            {admin && <h2>Maintenance Status in {admin.dorm_id}</h2>}
             <form onSubmit={handleSearch}>
-                <div style={styles.formGroup}>
-                    <label htmlFor="searchDorm" style={{ marginRight: '20px' }}>Dorm ID</label>
-                    <input
-                        type="text"
-                        id="searchDorm"
-                        style={styles.input}
-                        value={searchDorm}
-                        onChange={(e) => setSearchDorm(e.target.value)}
-                        placeholder="Enter dorm ID to search"
-                    />
-                </div>
                 <button type="submit" style={styles.button}>
                     Search
                 </button>
@@ -145,7 +85,15 @@ function MaintenanceStatus() {
 
             {error && <p style={styles.noData}>{error}</p>}
 
-            {maintenanceData.length > 0 && (
+            {/* 切換表格顯示狀態的按鈕 */}
+            <button
+                onClick={() => setShowTable((prev) => !prev)}
+                style={styles.tableButton}
+            >
+                {showTable ? 'Hide Table' : 'Show Table'}
+            </button>
+
+            {showTable && maintenanceData.length > 0 && (
                 <table style={styles.table}>
                     <thead>
                         <tr>
@@ -191,3 +139,66 @@ function MaintenanceStatus() {
 }
 
 export default MaintenanceStatus;
+
+const styles = {
+    container: {
+        padding: '20px',
+        maxWidth: '800px',
+        margin: '20px auto',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        backgroundColor: '#f9f9f9',
+    },
+    formGroup: {
+        marginBottom: '20px',
+    },
+    input: {
+        width: '80%',
+        padding: '8px',
+        marginTop: '5px',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+    },
+    button: {
+        marginTop: '10px',
+        padding: '10px 15px',
+        backgroundColor: '#007bff',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+    },
+    table: {
+        width: '100%',
+        borderCollapse: 'collapse',
+        marginTop: '20px',
+    },
+    th: {
+        border: '1px solid #ddd',
+        padding: '10px',
+        backgroundColor: '#f2f2f2',
+        textAlign: 'left',
+    },
+    td: {
+        border: '1px solid #ddd',
+        padding: '10px',
+    },
+    noData: {
+        marginTop: '20px',
+        color: '#555',
+    },
+    tableButton: {
+        padding: '8px 12px',
+        backgroundColor: '#28a745', // 綠色
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        margin: '10px 0',
+        transition: 'background-color 0.3s ease',
+    },
+    tableButtonHover: {
+        backgroundColor: '#218838', // 更深的綠色
+    },
+};

@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
   
       res.json({
         ssn: foundAdmin[0].ssn,
-        dorm_id: foundAdmin[0].dorm_id,
+        dorm_id: foundAdmin[0].dormId,
         email: foundAdmin[0].email,
         phone: foundAdmin[0].phone, // Optional if the admin has roles
       });
