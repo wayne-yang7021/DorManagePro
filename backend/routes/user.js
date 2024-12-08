@@ -2,40 +2,36 @@ const express = require('express');
 const router = express.Router();
 const { eq, and } = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
-const { user,  bed, snackOption } = require('../models/schema'); // Schema
+const { user,  bed, snackOption, maintenanceRecord } = require('../models/schema'); // Schema
 
-router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+router.post('/maintenance', async (req, res) => {
+  const { ssn, description } = req.body;
+  const db = getDb();
+  // Input validation
+  if (!ssn || !description) {
+    return res.status(400).json({ message: 'SSN and description are required' });
+  }
+
   try {
-    // 查詢用戶
-    const user = await db
-      .select({
-        ssn: user.ssn,
-        username: user.studentId,
-        password: user.ssn,
-      })
-      .from(user)
-      .where(user.studentId.eq(username))
-      .limit(1);
+    // Insert the maintenance request into the database
+    const result =  await db.insert(maintenanceRecord).values({
+      ssn: ssn,
+      description: description,
+      fixedDate: null, // set fixedDate to null
+      isFinished: false, // default value
+    });
 
-    console.log(user)
-    if (user.length === 0 || user[0].password !== password) {
-      return res.status(401).json({ error: 'Invalid username or password' });
-    }
-
-    console.log(user.ssn)
-
-    // 生成會話令牌
-    const token = `session-${Date.now()}-${Math.random()}`;
-    await db.update(user)
-      .set({ sessionToken: token })
-      .where(user.ssn.eq(user[0].ssn));
-
-    res.status(200).json({ message: 'Login successful', token });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    // Respond with success
+    res.status(201).json({
+      message: 'Maintenance request submitted successfully',
+      data: result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to submit maintenance request', error: error.message });
   }
 });
+
 
 
 
