@@ -1,19 +1,21 @@
 const express = require('express');
 const router = express.Router();
-
-// Database models/schema
-const db = require('../models/index'); // Drizzle DB 連接
+const { eq, and } = require('drizzle-orm')
+const { getDb } = require('../models/index')
 const { facility, bookRecord, snackRecord, snackOption } = require('../models/schema'); // Schema
 
 
 // Dorm Facility - 獲取所有宿舍設施
 
 router.get('/dorm_facility', async (req, res) => {
+  const db = getDb()
+  const { dormId } = req.query;
   try {
-    const facilities = await db.select().from(facility);
-    res.json(facilities);
+    const facilities = await db.select().from(facility).where(eq(facility.dormId, dormId));
+    res.status(200).json(facilities);
   } catch (err) {
     res.status(500).json({ error: err.message });
+    console.log(err.message)
   }
 });
 

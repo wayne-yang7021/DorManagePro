@@ -68,12 +68,10 @@ router.get('/snack_options', async (req, res) => {
   try {
     const db = getDb();
     const { dormId, semester } = req.query;
-    console.log(dormId, semester)
     const result = await db
     .select()
     .from(snackOption)
     .where(and(eq(snackOption.dormId, dormId), eq(snackOption.semester, semester)));
-    console.log(result)
     if (result.length === 0) {
       return res.status(404).json({ error: 'Dorm change request not found' });
     }

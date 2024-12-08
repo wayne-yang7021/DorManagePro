@@ -5,6 +5,7 @@ import InfoSearchByRoomNumber from '../components/InfoSearchByRoomNumber';
 import SnackAnnouncement from '../components/SnackAnnouncement';
 import DormTransferRequestSearch from '../components/DormTransferRequestSearch';
 import SnackReservationStatus from '../components/SnackReservationStatus';
+import MaintenanceStatus from '../components/MaintenanceStatusSearch';
 
 function Admin() {
 
@@ -17,6 +18,7 @@ function Admin() {
                 <SnackAnnouncement />
                 <DormTransferRequestSearch />
                 <SnackReservationStatus />
+                <MaintenanceStatus/>
             </div>
         </div>
     );

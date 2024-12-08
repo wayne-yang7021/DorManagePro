@@ -17,10 +17,13 @@ const MyProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-  
+    const [facilities, setFacilities] = useState([]);
+
 
     useEffect(() => {
         getSnackOption();
+        getAllFacility();
+        console.log(facilities)
     },[user])
 
     const applyMaintenance = async (ssn, description) => {
@@ -75,16 +78,24 @@ const MyProvider = ({ children }) => {
           }
       
           const data = await response.json();
-          console.log("Data from backend:", data); // Ensure this logs an array
           setSnackOption(data); // Update the state
-          console.log("State updated to:", snackOption); // State after update (might be delayed)
         } catch (err) {
           console.error(err.message);
         }
       };
 
+      const getAllFacility = async () => {
+        try {
+          const response = await fetch(`http://localhost:8888/api/dorm/dorm_facility?dormId=${user.dormId}`);
+          const data = await response.json()
+          setFacilities(data);
+        } catch (error) {
+          console.error('Error fetching facilities:', error);
+        }
+      };
+
     return (
-        <MyContext.Provider value={{ snackOption, getSnackOption, applyMaintenance, loading,  }}>
+        <MyContext.Provider value={{ snackOption, getSnackOption, applyMaintenance, loading, facilities, getAllFacility }}>
             {children}
         </MyContext.Provider>
     );

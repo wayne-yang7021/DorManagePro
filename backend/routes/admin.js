@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { eq, and } = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
-const { user,  bed , snackOption, moveRecord, moveApplication, admin} = require('../models/schema'); // Schema
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
-
+const { user,  bed , snackOption, moveRecord, moveApplication, admin, maintenanceRecord} = require('../models/schema'); // Schema
 
 router.post('/login', async (req, res) => {
     const db = getDb();
@@ -94,8 +93,6 @@ router.post('/login', async (req, res) => {
     }
   });
 
-
-
 // 根據 student_id 搜尋學生
 router.get('/student_search', async (req, res) => {
     const { student_id } = req.query;
@@ -163,7 +160,6 @@ router.get('/student_search', async (req, res) => {
 //Snack Announcement - 發佈零食公告
 router.post('/snack_announcement', async (req, res) => {
     const { ssn, semester, dorm_id, snack_name } = req.body;
-    console.log(ssn, semester,dorm_id,snack_name)
     try {
         const db = getDb();
       // 新增零食選項
@@ -183,7 +179,6 @@ router.post('/snack_announcement', async (req, res) => {
 // Dorm Transfer Request Search - 查詢宿舍變更請求
 router.get('/dorm_transfer_request_search', async (req, res) => {
     const {origin_dorm_id} = req.query;
-    console.log(origin_dorm_id)
     try {
         const db = getDb();
         const result = await db
@@ -206,4 +201,68 @@ router.get('/dorm_transfer_request_search', async (req, res) => {
     }
 });
 
-  module.exports = router;
+// Maintenance Status Search - 查詢報修狀態
+router.get('/maintenance_status', async (req, res) => {
+    const {dorm_id} = req.query;
+    try {
+        const db = getDb();
+        const result = await db
+        .select({
+            ssn: maintenanceRecord.ssn,
+            dorm_id: user.dormId,
+            description: maintenanceRecord.description,
+            isCompleted: maintenanceRecord.isFinished,
+            completedDate: maintenanceRecord.fixedDate
+        })
+        .from(maintenanceRecord)
+        .leftJoin(user, eq(maintenanceRecord.ssn, user.ssn))
+        .where(eq(user.dormId, dorm_id));
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: 'Dorm change request not found' });
+      }
+  
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+});
+
+// Update maintenance - 更新報修狀態
+router.put('/update_maintenance', async (req, res) => {
+    const { ssn, dorm_id, completedDate } = req.body; 
+    if (!ssn || !dorm_id || !completedDate) {
+        return res.status(400).json({ error: 'Missing required parameters' });
+    }
+
+    try {
+        const db = getDb();
+        console.log('Attempting database update with ssn:', ssn, 'dorm_id:', dorm_id, 'completedDate:', completedDate);
+
+        const updateResult = await db
+            .update(maintenanceRecord)
+            .set({
+                isFinished: true,
+                fixedDate: completedDate,
+            })
+            .where(eq(maintenanceRecord.ssn, ssn));
+
+        console.log('Update result:', updateResult);
+
+        if (!updateResult) {
+            return res.status(500).json({ error: 'Database did not return expected results' });
+        }
+
+        if (updateResult.rowCount === 0) {
+            return res.status(404).json({ error: 'No matching records found to update' });
+        }
+
+        return res.status(200).json({ message: 'Maintenance status updated successfully' });
+    } catch (err) {
+        console.error('Error during database operation:', err);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+
+module.exports = router;

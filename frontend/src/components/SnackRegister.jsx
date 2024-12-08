@@ -38,7 +38,6 @@ useEffect(() => {
 
 }, [snackOption]);  // Empty dependency array to run once on component mount
 
-  console.log(snackOption)
 
 
   const handleRegistration = (eventId) => {
