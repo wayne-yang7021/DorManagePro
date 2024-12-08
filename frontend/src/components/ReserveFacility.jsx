@@ -22,6 +22,8 @@ const FacilityReservation = () => {
 
   const { facilities } = useMyContext();
 
+  console.log(facilities)
+
   useEffect(() => {
     if (selectedFacility && selectedItem) {
       calculateWeeklyDates(selectedDate);
