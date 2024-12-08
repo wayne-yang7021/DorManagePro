@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { eq, and } = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
-const { user,  bed, snackOption, maintenanceRecord } = require('../models/schema'); // Schema
+const { user,  bed, snackOption, maintenanceRecord, bookRecord } = require('../models/schema'); // Schema
 
 router.post('/maintenance', async (req, res) => {
   const { ssn, description } = req.body;
@@ -32,6 +32,31 @@ router.post('/maintenance', async (req, res) => {
   }
 });
 
+
+router.post('/book', async (req, res) => {
+  const { ssn, fId, isCancelled, bookTime } = req.body;
+  const db = getDb();
+  // console.log('Received bookTime:', bookTime);
+  try {
+    // Validate the input
+    if (!ssn || !fId || !bookTime) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Insert the booking into the database
+    await db.insert(bookRecord).values({
+      ssn,
+      fId,
+      isCancelled,
+      bookTime: new Date(bookTime), // Convert to a Date object
+    });
+
+    res.status(201).json({ message: 'Booking successful' });
+  } catch (error) {
+    console.error('Error inserting booking:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 

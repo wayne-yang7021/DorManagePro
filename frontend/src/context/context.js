@@ -23,7 +23,6 @@ const MyProvider = ({ children }) => {
     useEffect(() => {
         getSnackOption();
         getAllFacility();
-        console.log(facilities)
     },[user])
 
     const applyMaintenance = async (ssn, description) => {
