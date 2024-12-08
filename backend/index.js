@@ -103,6 +103,7 @@ app.get('/api/user', async (req, res) => {
     // console.log(foundUser)
 
     res.json({
+      ssn: foundUser[0].ssn,
       studentId: foundUser[0].studentId,
       dormId: foundUser[0].dormId,
       email: foundUser[0].email,
