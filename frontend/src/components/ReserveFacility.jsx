@@ -39,10 +39,8 @@ const FacilityReservation = () => {
         const booking = scheduleData.find((booking) => {
           // Create a date object for the booking time
           const errorTime = new Date(booking.bookTime)
-          console.log("here's error time", errorTime)
           errorTime.setHours(errorTime.getHours() - 8); // Subtract 8 hours
           const bookingTime = errorTime
-          console.log("here's the bookingTime", bookingTime)
           // Create a date object for the current slot
           const [slotHour] = hour.split(':');
           const slotDateTime = new Date(
