@@ -15,7 +15,7 @@ function DormTransferRequestSearch() {
         e.preventDefault();
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/dorm_transfer_request_search?origin_dorm_id=${admin.dorm_id}`
+                `http://localhost:8888/api/admin/dorm_transfer_request_search?applying_dorm_id=${admin.dorm_id}`
             );
 
             if (!response.ok) {

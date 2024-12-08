@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useAuth } from "../context/authContext";
 
 function InfoSearchByStudentId() {
+    const {admin} = useAuth()
     const [studentId, setStudentId] = useState('');
     const [studentData, setStudentData] = useState(null);
     const [error, setError] = useState('');
@@ -15,7 +17,7 @@ function InfoSearchByStudentId() {
 
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/student_search?student_id=${studentId}`
+                `http://localhost:8888/api/admin/student_search?student_id=${studentId}&dorm_id=${admin.dorm_id}`
             );
             
             if (!response.ok) {
@@ -85,7 +87,7 @@ function InfoSearchByStudentId() {
 
     return (
         <div style={styles.container}>
-            <h2>Search Student Information by Student ID</h2>
+            {admin && <h2>Search Student Information in {admin.dorm_id} by Student ID </h2>}
             <form onSubmit={handleSearch} style={{ marginBottom: '20px' }}>
                 <div style={styles.formGroup}>
                     <label htmlFor="studentId" style={styles.label}>Student ID</label>

@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
+import { useAuth } from "../context/authContext";
 
 function SnackAnnouncement() {
-    const [snacks, setSnacks] = useState([]); // Stores all snack items locally
+    const {admin} = useAuth()
     const [newSnacks, setNewSnacks] = useState(''); // Tracks the input for snack names
     const [semester, setSemester] = useState(''); // Tracks the input for semester
-    const [dormId, setDormId] = useState(''); // Tracks the input for dorm ID
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const ssn = 'a12345678'
+    // const ssn = 'a12345678'
     const handleAddSnacks = async (e) => {
         e.preventDefault();
 
         // Validate input
-        if (!semester.trim() || !dormId.trim()) {
-            setError('Please enter semester and dorm ID.');
+        if (!semester.trim()) {
+            setError('Please enter semester.');
             return;
         }
 
@@ -35,27 +35,27 @@ function SnackAnnouncement() {
 
         try {
             // Send POST request to the backend
-            for (const snack of snacksToAdd) {
+            for (const snackToAdd of snacksToAdd) {
                 const response = await fetch('http://localhost:8888/api/admin/snack_announcement', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        ssn: ssn,
+                        ssn: admin.ssn,
                         semester: semester,
-                        dorm_id: dormId,
-                        snack_name: snack,
+                        dorm_id: admin.dorm_id,
+                        snack_name: snackToAdd,
                     }),
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to announce snack: ' + snack);
+                    throw new Error('Failed to announce snack: ' + snackToAdd);
                 }
             }
 
             // Update local state and reset form
-            setSnacks([...snacks, ...snacksToAdd]);
+            // setSnacks([...snacks, ...snacksToAdd]);
             setNewSnacks('');
             setError('');
             setSuccess('Snack announcement created successfully!');
@@ -136,18 +136,7 @@ function SnackAnnouncement() {
                         style={styles.input}
                         value={semester}
                         onChange={(e) => setSemester(e.target.value)}
-                        placeholder="Enter semester, e.g., 2024-Spring"
-                    />
-                </div>
-                <div style={styles.formGroup}>
-                    <label htmlFor="dormId">Dorm ID</label>
-                    <input
-                        type="text"
-                        id="dormId"
-                        style={styles.input}
-                        value={dormId}
-                        onChange={(e) => setDormId(e.target.value)}
-                        placeholder="Enter dorm ID, e.g., Dorm A"
+                        placeholder="Enter semester, e.g., 112-1"
                     />
                 </div>
                 <div style={styles.formGroup}>
@@ -173,15 +162,6 @@ function SnackAnnouncement() {
 
             {error && <div style={styles.alert}>{error}</div>}
             {success && <div style={styles.success}>{success}</div>}
-
-            <h3>Snack Announcements</h3>
-            <ul style={styles.list}>
-                {snacks.map((snack, index) => (
-                    <li key={index} style={styles.listItem}>
-                        {snack}
-                    </li>
-                ))}
-            </ul>
         </div>
     );
 }
