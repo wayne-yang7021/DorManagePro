@@ -72,7 +72,7 @@ router.get('/transfer_application', async (req, res) => {
       return res.status(404).json({ error: 'Student not found' });
     }
     res.json(result);
-  } catch {
+  } catch(err) {
     res.status(500).json({ error: err.message });
     console.log(err.message);
   } 

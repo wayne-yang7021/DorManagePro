@@ -65,20 +65,20 @@ const MyProvider = ({ children }) => {
     };
 
     const getApplications = async () => {
-      
       try {
         const response = await fetch(`http://localhost:8888/api/user/transfer_application?student_ssn=${user?.ssn}`);
     
         if (!response.ok) {
           const errorData = await response.json();
+          console.error('Error Response Data:', errorData);
+          throw new Error(errorData.error || 'Failed to fetch applications');
         }
     
         const applications = await response.json();
-        console.log(applications)
-        setApplications(applications)
+        console.log('Applications fetched:', applications);
+        setApplications(applications);
       } catch (err) {
         console.error('Error fetching applications:', err.message);
-        throw err; // Re-throw the error to handle it in the caller function
       }
     };
 
