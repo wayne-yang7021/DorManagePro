@@ -81,7 +81,6 @@ const styles = {
     container: {
         padding: '20px',
         maxWidth: '800px',
-        width: '600px',
         margin: '20px auto',
         border: '1px solid #ddd',
         borderRadius: '8px',

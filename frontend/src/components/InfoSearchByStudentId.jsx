@@ -36,7 +36,6 @@ function InfoSearchByStudentId() {
     const styles = {
         container: {
             padding: '20px',
-            width: '600px',
             maxWidth: '800px',
             margin: '20px auto',
             border: '1px solid #ddd',
