@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMyContext } from '../context/context';
 
-
 const SnackRegistration = () => {
   const [registrations, setRegistrations] = useState({});
   const [expandedEvents, setExpandedEvents] = useState({});
@@ -10,35 +9,27 @@ const SnackRegistration = () => {
   const { snackOption, getSnackOption } = useMyContext();
   const [snackEvents, setSnackEvents] = useState([]);
 
-useEffect(() => {
+  useEffect(() => {
+    const snackMap = new Map();
+    snackOption.forEach(event => {
+      const { dormId, semester, sName, snackName } = event;
+      const key = `${dormId}-${semester}`;
 
-  // Map for grouping the data
-  const snackMap = new Map();
-  snackOption.forEach(event => {
-    const { dormId, semester, sName, snackName } = event;
-    const key = `${dormId}-${semester}`;  // Create a unique key for each group
+      if (!snackMap.has(key)) {
+        snackMap.set(key, {
+          id: snackMap.size + 1,
+          dormId,
+          semester,
+          snacks: []
+        });
+      }
 
-    // If the key doesn't exist in the map, initialize it
-    if (!snackMap.has(key)) {
-      snackMap.set(key, {
-        id: snackMap.size + 1,  // Generate a unique id
-        dormId,
-        semester,
-        snacks: []
-      });
-    }
+      snackMap.get(key).snacks.push(sName);
+    });
 
-    // Add the snackName to the corresponding snacks array
-    snackMap.get(key).snacks.push(sName);
-  });
-
-  // Convert the map to an array and set the state
-  const result = Array.from(snackMap.values());
-  setSnackEvents(result);  // Set the state with the transformed data
-
-}, [snackOption]);  // Empty dependency array to run once on component mount
-
-
+    const result = Array.from(snackMap.values());
+    setSnackEvents(result);
+  }, [snackOption]);
 
   const handleRegistration = (eventId) => {
     setRegistrations(prev => ({
@@ -64,14 +55,16 @@ useEffect(() => {
   return (
     <div style={{ 
       fontFamily: 'Arial, sans-serif', 
-      maxWidth: '800px', 
+      maxWidth: '1200px', 
       margin: 'auto', 
-      padding: '20px' 
+      padding: '20px', 
+      backgroundColor: '#1e1e1e', 
+      color: '#fdd835' 
     }}>
       <h1 style={{ 
         textAlign: 'center', 
         marginBottom: '30px', 
-        color: '#333' 
+        color: '#fdd835' 
       }}>
         Dorm Snack Registrations
       </h1>
@@ -85,11 +78,11 @@ useEffect(() => {
           <div 
             key={event.id} 
             style={{ 
-              border: '1px solid #ddd', 
+              border: '1px solid #333', 
               borderRadius: '8px', 
               padding: '20px', 
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              backgroundColor: registrations[event.semester] ? '#e6f3e6' : 'white'
+              backgroundColor: registrations[event.semester] ? '#2e2e2e' : '#1e1e1e'
             }}
           >
             <div style={{ 
@@ -98,20 +91,21 @@ useEffect(() => {
               alignItems: 'center',
               marginBottom: '15px' 
             }}>
-              <h2 style={{ margin: 0, color: '#007bff', cursor: 'pointer' }} onClick={() => toggleEventDetails(event.id)}>
+              <h2 style={{ margin: 0, color: '#fdd835', cursor: 'pointer' }} onClick={() => toggleEventDetails(event.id)}>
                 {event.title}
                 <span style={{ 
                   marginLeft: '10px', 
                   fontSize: '14px', 
-                  color: '#6c757d' 
+                  color: '#fdd835' 
                 }}>
                   {expandedEvents[event.semester] ? '▲' : '▼'}
                 </span>
               </h2>
               <span style={{ 
-                backgroundColor: '#f8f9fa', 
+                backgroundColor: '#333', 
                 padding: '5px 10px', 
-                borderRadius: '4px' 
+                borderRadius: '4px',
+                color: '#fdd835' 
               }}>
                 {event.dormId}
               </span>
@@ -119,15 +113,16 @@ useEffect(() => {
 
             {expandedEvents[event.id] && (
               <>
-                <p style={{ color: '#6c757d', marginBottom: '10px' }}>
+                <p style={{ color: '#bbb', marginBottom: '10px' }}>
                   {event.description}
                 </p>
 
                 <div style={{ 
-                  backgroundColor: '#f1f3f5', 
+                  backgroundColor: '#2a2a2a', 
                   padding: '10px', 
                   borderRadius: '4px', 
-                  marginBottom: '15px' 
+                  marginBottom: '15px', 
+                  color: '#fdd835' 
                 }}>
                   <div>
                     <strong>Date:</strong> {event.date}
@@ -155,8 +150,8 @@ useEffect(() => {
                   <li 
                     key={snack} 
                     style={{ 
-                      backgroundColor: selectedSnacks[event.id] === snack ? '#28a745' : '#e9ecef', 
-                      color: selectedSnacks[event.id] === snack ? 'white' : 'black',
+                      backgroundColor: selectedSnacks[event.id] === snack ? '#fdd835' : '#333', 
+                      color: selectedSnacks[event.id] === snack ? 'black' : '#fdd835',
                       padding: '5px 10px', 
                       borderRadius: '4px',
                       cursor: 'pointer',
@@ -176,12 +171,11 @@ useEffect(() => {
               alignItems: 'center' 
             }}>
               <div>
-                <strong>Participants:</strong> {event.currentParticipants} / {event.maxParticipants}
                 {selectedSnacks[event.id] && (
                   <div style={{ 
                     marginTop: '10px', 
                     fontSize: '14px', 
-                    color: '#28a745' 
+                    color: '#fdd835' 
                   }}>
                     Selected Snack: {selectedSnacks[event.id]}
                   </div>
@@ -190,8 +184,8 @@ useEffect(() => {
               <button 
                 onClick={() => handleRegistration(event.id)}
                 style={{ 
-                  backgroundColor: registrations[event.id] ? '#28a745' : '#007bff', 
-                  color: 'white', 
+                  backgroundColor: registrations[event.id] ? '#fdd835' : '#333', 
+                  color: registrations[event.id] ? 'black' : '#fdd835', 
                   border: 'none', 
                   padding: '10px 20px', 
                   borderRadius: '5px', 

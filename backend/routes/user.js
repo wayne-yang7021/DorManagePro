@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { eq, and } = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
-const { user,  bed, snackOption, maintenanceRecord, bookRecord, moveApplication } = require('../models/schema'); // Schema
-
+const { user,  bed, snackOption, maintenanceRecord, bookRecord, moveRecord, moveApplication } = require('../models/schema'); // Schema
 router.post('/maintenance', async (req, res) => {
   const { ssn, description } = req.body;
   const db = getDb();
@@ -56,6 +55,27 @@ router.post('/book', async (req, res) => {
     console.error('Error inserting booking:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+router.get('/transfer_application', async (req, res) => {
+  try {
+    const db = getDb();
+    const { student_ssn } = req.query
+    if(!student_ssn){
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    const result = await db
+      .select()
+      .from(moveApplication)
+      .where(eq(moveApplication.ssn, student_ssn))
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+    res.json(result);
+  } catch {
+    res.status(500).json({ error: err.message });
+    console.log(err.message);
+  } 
 });
 
 

@@ -18,11 +18,16 @@ const MyProvider = ({ children }) => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [facilities, setFacilities] = useState([]);
+    const [applications, setApplications] = useState([]);
+
 
 
     useEffect(() => {
+      if(user){
         getSnackOption();
         getAllFacility();
+        getApplications();
+      }
     },[user])
 
     const applyMaintenance = async (ssn, description) => {
@@ -57,6 +62,24 @@ const MyProvider = ({ children }) => {
       }
       return true;
 
+    };
+
+    const getApplications = async () => {
+      
+      try {
+        const response = await fetch(`http://localhost:8888/api/user/transfer_application?student_ssn=${user?.ssn}`);
+    
+        if (!response.ok) {
+          const errorData = await response.json();
+        }
+    
+        const applications = await response.json();
+        console.log(applications)
+        setApplications(applications)
+      } catch (err) {
+        console.error('Error fetching applications:', err.message);
+        throw err; // Re-throw the error to handle it in the caller function
+      }
     };
 
     const getSnackOption = async () => {
@@ -106,7 +129,7 @@ const MyProvider = ({ children }) => {
 
 
     return (
-        <MyContext.Provider value={{ snackOption, getSnackOption, applyMaintenance, loading, facilities, getAllFacility }}>
+        <MyContext.Provider value={{ snackOption, getSnackOption, applyMaintenance, loading, facilities, getAllFacility, applications }}>
             {children}
         </MyContext.Provider>
     );
