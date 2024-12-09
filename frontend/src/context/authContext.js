@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [admin, setAdmin] = useState(null); // Holds admin data
 
     useEffect(() => {
@@ -32,11 +32,9 @@ export const AuthProvider = ({ children }) => {
             } else {
                 setUser(null);
             }
-            setLoading(false);
         } catch (error) {
             console.error('Authentication check failed:', error);
             setUser(null);
-            setLoading(false);
         }
     };
 

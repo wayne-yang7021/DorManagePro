@@ -3,6 +3,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useMyContext } from '../context/context';
 import { useAuth } from '../context/authContext';
+import './ReserveFacility.css';  // Adjust the path as necessary
 const hours = [
   '08:00', '09:00', '10:00', '11:00', '12:00',
   '13:00', '14:00', '15:00', '16:00', '17:00',
@@ -125,7 +126,7 @@ const FacilityReservation = () => {
   };
 
   const renderTimeSlots = () => (
-    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+    <table className="time-slots-table">
       <thead>
         <tr>
           <th>Time</th>
@@ -137,17 +138,12 @@ const FacilityReservation = () => {
         {timeSlots.map((slot) => (
           <tr key={slot.time}>
             <td>{slot.time}</td>
-            <td style={{ color: slot.status === 'Available' ? 'green' : 'red' }}>{slot.status}</td>
+            <td className={`slot-status ${slot.status}`}>{slot.status}</td>
             <td>
               <button
                 disabled={slot.status === 'Reserved'}
-                onClick={() => {handleBook(slot.time)}}
-                style={{
-                  backgroundColor: slot.status === 'Available' ? '#28a745' : '#6c757d',
-                  color: 'white',
-                  padding: '5px 10px',
-                  cursor: slot.status === 'Available' ? 'pointer' : 'not-allowed',
-                }}
+                onClick={() => handleBook(slot.time)}
+                className={`book-button ${slot.status === 'Available' ? 'available' : 'reserved'}`}
               >
                 {slot.status === 'Available' ? 'Book' : 'Booked'}
               </button>
@@ -159,33 +155,19 @@ const FacilityReservation = () => {
   );
 
   return (
-    <div style={{ padding: '20px', width: '50%', margin: '20px auto', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Dorm Facility Reservation</h1>
-      <div>
+    <div className="reservation-container">
+      <h1>Facility Reservation</h1>
+      <div className="facility-list">
         {facilities?.map((facility) => (
           <div
             key={facility.fId}
-            style={{
-              border: '1px solid #ddd',
-              padding: '10px',
-              marginBottom: '20px',
-              borderRadius: '5px',
-              backgroundColor: selectedFacility?.fId === facility.fId ? '#f0f0f0' : 'white',
-            }}
+            className={`facility-item ${selectedFacility?.fId === facility.fId ? 'selected' : ''}`}
           >
             <h2>{facility.fName}</h2>
             <p>For Rent: {facility.forRent ? 'Yes' : 'No'}</p>
             <p>Under Maintenance: {facility.underMaintenance ? 'Yes' : 'No'}</p>
             <button
-              style={{
-                padding: '10px',
-                backgroundColor: '#007BFF',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: facility.forRent && !facility.underMaintenance ? 'pointer' : 'not-allowed',
-                opacity: facility.forRent && !facility.underMaintenance ? 1 : 0.6,
-              }}
+              className={`select-facility-button ${facility.forRent && !facility.underMaintenance ? 'available' : 'disabled'}`}
               disabled={!facility.forRent || facility.underMaintenance}
               onClick={() => {
                 setSelectedFacility(facility);
@@ -197,15 +179,7 @@ const FacilityReservation = () => {
             {selectedFacility?.fId === facility.fId && (
               <div>
                 <button
-                  style={{
-                    marginTop: '10px',
-                    padding: '10px',
-                    backgroundColor: '#007BFF',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                  }}
+                  className="toggle-calendar-button"
                   onClick={toggleCalendar}
                 >
                   📅 Select Date
@@ -214,15 +188,11 @@ const FacilityReservation = () => {
                   <Calendar
                     onChange={(date) => setSelectedDay(date)}
                     value={selectedDay}
-                    style={{ marginTop: '10px' }}
+                    minDate={new Date()}
+                    tileClassName="custom-tile"
                   />
                 )}
-                {weeklyDates.length > 0 && (
-                  <div style={{ marginTop: '20px' }}>
-
-                    {selectedDay && timeSlots.length > 0 && renderTimeSlots()} 
-                  </div>
-                )}
+                {selectedDay && renderTimeSlots()}
               </div>
             )}
           </div>
