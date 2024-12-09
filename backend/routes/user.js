@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { eq, and } = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
-const { user,  bed, snackOption, maintenanceRecord, bookRecord } = require('../models/schema'); // Schema
+const { user,  bed, snackOption, maintenanceRecord, bookRecord, moveApplication } = require('../models/schema'); // Schema
 
 router.post('/maintenance', async (req, res) => {
   const { ssn, description } = req.body;
@@ -60,32 +60,32 @@ router.post('/book', async (req, res) => {
 
 
 // 根據 student_id 和 room_id 搜尋學生
-router.get('/student_search', async (req, res) => {
-  try {
-    const db = getDb();
-    const { student_id, room_id } = req.query;
-    const result = await db
-      .select({
-        student_id: users.studentId,
-        room_id: bed.roomNumber,
-        username: users.username,
-        email: users.email,
-        phone: users.phone,
-      })
-      .from(users)
-      .innerJoin(bed, bed.bId.eq(users.bId))
-      .where(users.studentId.eq(student_id).and(bed.roomNumber.eq(room_id)))
-      .limit(1);
+// router.get('/student_search', async (req, res) => {
+//   try {
+//     const db = getDb();
+//     const { student_id, room_id } = req.query;
+//     const result = await db
+//       .select({
+//         student_id: users.studentId,
+//         room_id: bed.roomNumber,
+//         username: users.username,
+//         email: users.email,
+//         phone: users.phone,
+//       })
+//       .from(users)
+//       .innerJoin(bed, bed.bId.eq(users.bId))
+//       .where(users.studentId.eq(student_id).and(bed.roomNumber.eq(room_id)))
+//       .limit(1);
 
-    if (result.length === 0) {
-      return res.status(404).json({ error: 'Student not found' });
-    }
+//     if (result.length === 0) {
+//       return res.status(404).json({ error: 'Student not found' });
+//     }
 
-    res.json(result[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+//     res.json(result[0]);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 router.get('/snack_options', async (req, res) => {
   try {
@@ -130,4 +130,77 @@ router.get('/dorm_change_request', async (req, res) => {
   }
 });
 
+router.get('/facilities_reservations', async (req, res) => {
+  try {
+    const db = getDb();
+    const { ssn } = req.query;
+    const result = await db
+    .select()
+    .from(bookRecord)
+    .where(eq(bookRecord.ssn, ssn));
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+    res.json(result);
+    console.log(result)
+  } catch (err) {
+    console.log(err.message)
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/cancel_facilities_reservations', async (req, res) => {
+  const { ssn, fId, bookTime } = req.body;
+  const correctBooktime = new Date(bookTime)
+  try {
+    const db = getDb();
+    // Validate the input
+    if (!ssn || !fId || !bookTime) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const updateResult = await db
+    .update(bookRecord)
+    .set({ isCancelled: true })
+    .where(and(eq(bookRecord.ssn, ssn), eq(bookRecord.fId, fId), eq(bookRecord.bookTime, correctBooktime)));
+
+    if (!updateResult) {
+      return res.status(500).json({ error: 'Database did not return expected results' });
+    }
+
+    res.status(200).json({ message: 'Reservation cancelled successfully' });
+  } catch (error) {
+    console.error('Error cancelling reservation:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Dorm Change Request - 宿舍變更請求
+router.post('/dorm_change_request', async (req, res) => {
+  try {
+    const db = getDb();
+    const { ssn, move_to, semester } = req.body;
+    console.log('data', ssn, move_to, semester)
+    const result = await db
+      .insert(moveApplication)
+      .values({
+        ssn,
+        semester,
+        dormId: move_to,
+        status: "pending",
+      })
+    console.log(result)
+    // Respond with success
+    res.status(201).json({
+      message: 'Dorm change request submitted successfully',
+      data: result,
+    });
+  } catch (err) {
+    console.log(err.message)
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
+

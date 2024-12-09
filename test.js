@@ -9,6 +9,10 @@ const bookingData = [
     // More booking records could go here...
 ];
 
+const testfunction = () => {
+    
+}
+
 const transformBookingData = (bookings) => {
     return hours.map((hour) => {
         const booking = bookings.find((booking) => {

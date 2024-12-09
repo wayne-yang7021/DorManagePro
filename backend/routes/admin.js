@@ -112,7 +112,8 @@ router.get('/all_living_student_search', async (req, res) => {
         .from(user)
         .leftJoin(moveRecord, eq(user.ssn, moveRecord.ssn))
         .where(and(eq(user.dormId, dorm_id),isNotNull(moveRecord.moveInDate) ,isNull(moveRecord.moveOutDate))) // 住在此宿舍中並且還沒搬出去
-        .orderBy(moveRecord.moveInDate);
+        .orderBy(moveRecord.moveInDate)
+        .limit(200);
   
         if (result.length === 0) {
             return res.status(404).json({ error: 'Student not found' });
