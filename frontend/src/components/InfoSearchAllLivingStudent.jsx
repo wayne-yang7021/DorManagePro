@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from "../context/authContext";
 
-function InfoSearchByStudentId() {
+function InfoSearchAllLivingStudent() {
     const {admin} = useAuth()
-    const [studentId, setStudentId] = useState('');
     const [studentData, setStudentData] = useState(null);
     const [error, setError] = useState('');
+    const [showTable, setShowTable] = useState(true); // 控制表格顯示
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        if (!studentId) {
-            setStudentData(null);
-            setError('Please enter a student ID to search.');
-            return;
-        }
 
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/student_search?student_id=${studentId}&dorm_id=${admin.dorm_id}`
+                `http://localhost:8888/api/admin/all_living_student_search?dorm_id=${admin.dorm_id}`
             );
             
             if (!response.ok) {
@@ -25,7 +20,7 @@ function InfoSearchByStudentId() {
             }
 
             const data = await response.json();
-            setStudentData([data]); // 包裝成陣列以便渲染
+            setStudentData(data); // 包裝成陣列以便渲染
             setError('');
         } catch (err) {
             setStudentData(null);
@@ -82,23 +77,26 @@ function InfoSearchByStudentId() {
             borderRadius: '8px',
             backgroundColor: '#ffffff',
         },
+        tableButton: {
+            padding: '8px 12px',
+            backgroundColor: '#28a745', // 綠色
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            margin: '10px 0',
+            transition: 'background-color 0.3s ease',
+        },
+        tableButtonHover: {
+            backgroundColor: '#218838', // 更深的綠色
+        },
     };
 
     return (
         <div style={styles.container}>
-            {admin && <h2>Search Student Information in {admin.dorm_id} by Student ID </h2>}
+            {admin && <h2>Search All Living Student Information in {admin.dorm_id} </h2>}
             <form onSubmit={handleSearch} style={{ marginBottom: '20px' }}>
-                <div style={styles.formGroup}>
-                    <label htmlFor="studentId" style={styles.label}>Student ID</label>
-                    <input
-                        type="text"
-                        id="studentId"
-                        style={styles.input}
-                        value={studentId}
-                        onChange={(e) => setStudentId(e.target.value)}
-                        placeholder="Enter Student ID"
-                    />
-                </div>
                 <button
                     type="submit"
                     style={styles.button}
@@ -111,11 +109,20 @@ function InfoSearchByStudentId() {
 
             {error && <div style={styles.alert}>{error}</div>}
 
-            {studentData && studentData.map(student => (
+            {/* 切換表格顯示狀態的按鈕 */}
+            <button
+                onClick={() => setShowTable((prev) => !prev)}
+                style={styles.tableButton}
+            >
+                {showTable ? 'Hide Table' : 'Show Table'}
+            </button>
+
+            {showTable && studentData && studentData.map(student => (
                 <div style={styles.card} key={student.student_id}>
                     <h5>Student Details</h5>
                     <p><strong>Student ID:</strong> {student.student_id}</p>
                     <p><strong>Bed:</strong> {student.b_id}</p>
+                    <p><strong>Move in date:</strong> {student.move_in_date}</p>
                     <p><strong>Due date:</strong> {student.due_date}</p>
                     <p><strong>Email:</strong> {student.email}</p>
                     <p><strong>Contact:</strong> {student.phone}</p>
@@ -125,4 +132,4 @@ function InfoSearchByStudentId() {
     );
 }
 
-export default InfoSearchByStudentId;
+export default InfoSearchAllLivingStudent;

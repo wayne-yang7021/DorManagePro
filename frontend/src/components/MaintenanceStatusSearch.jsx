@@ -9,10 +9,6 @@ function MaintenanceStatus() {
     const [completionDate, setCompletionDate] = useState('');
     const [showTable, setShowTable] = useState(true); // 控制表格顯示
 
-    // if (admin != null) {
-    //     console.log(admin)
-    // }
-
     const handleSearch = async (e) => {
         e.preventDefault();
         try {

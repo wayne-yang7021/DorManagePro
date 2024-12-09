@@ -116,6 +116,18 @@ const MyProvider = ({ children }) => {
         }
       };
 
+      const getReservedFacility = async () => {
+        try {
+          const response = await fetch(`http://localhost:8888/api/user/dorm_facility?dormId=${user.dormId}`);
+          const data = await response.json()
+          setFacilities(data);
+        } catch (error) {
+          console.error('Error fetching facilities:', error);
+        }
+      };
+
+
+
     return (
         <MyContext.Provider value={{ snackOption, getSnackOption, applyMaintenance, loading, facilities, getAllFacility, applications }}>
             {children}

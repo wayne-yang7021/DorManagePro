@@ -63,7 +63,8 @@ const FacilityReservation = () => {
       
         return {
           time: hour,
-          status: booking ? 'Reserved' : 'Available',
+          status: booking ? (booking.isCancelled ? 'Available' : 'Reserved') : 'Available',
+
         };
       });
 
