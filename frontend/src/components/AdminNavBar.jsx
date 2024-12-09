@@ -115,20 +115,20 @@ const Navbar = () => {
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
-            Personal Information
+            {!loading && admin ? admin.email : "admin"}
           </a>
         </li>
 
-        <li>
+        {/* <li>
           <a
             href="/contact"
             style={styles.link}
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
-            {!loading && admin ? admin.email : "admin"}
+            Contact
             </a>
-        </li>
+        </li> */}
         <li>
           <a
             href="#"

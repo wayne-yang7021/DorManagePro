@@ -6,10 +6,10 @@ import SnackAnnouncement from '../components/SnackAnnouncement';
 import DormTransferRequestSearch from '../components/DormTransferRequestSearch';
 import SnackReservationStatus from '../components/SnackReservationStatus';
 import MaintenanceStatus from '../components/MaintenanceStatusSearch';
-
+import { useAuth } from "../context/authContext";
 function Admin() {
-
-    return (
+    const {admin} = useAuth()
+    return admin ? (
         <div>
             <AdminNavbar />
             <div>
@@ -18,8 +18,15 @@ function Admin() {
                 <SnackAnnouncement />
                 <DormTransferRequestSearch />
                 <SnackReservationStatus />
-                <MaintenanceStatus/>
+                <MaintenanceStatus />
             </div>
+        </div>
+    ) : (
+        <div>
+            <AdminNavbar />
+            <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '18px', color: '#721c24' }}>
+                Please login first
+            </p>
         </div>
     );
 }

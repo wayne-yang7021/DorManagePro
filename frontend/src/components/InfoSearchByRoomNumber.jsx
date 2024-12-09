@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from "../context/authContext";
 
 function InfoSearchByRoomNumber() {
+    const {admin} = useAuth()
     const [roomNumber, setRoomNumber] = useState('');
     const [studentData, setStudentData] = useState(null);
     const [error, setError] = useState('');
@@ -17,7 +18,7 @@ function InfoSearchByRoomNumber() {
 
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/room_search?room_number=${roomNumber}`
+                `http://localhost:8888/api/admin/room_search?room_number=${roomNumber}&dorm_id=${admin.dorm_id}`
             );
 
             if (!response.ok) {
@@ -25,7 +26,7 @@ function InfoSearchByRoomNumber() {
             }
 
             const data = await response.json();
-            setStudentData([data]); // 包裝成陣列以便渲染
+            setStudentData(data); // 包裝成陣列以便渲染
             setError('');
         } catch (err) {
             setStudentData(null);
@@ -87,7 +88,7 @@ function InfoSearchByRoomNumber() {
 
     return (
         <div style={styles.container}>
-            <h2>Search Room Information by Room Number</h2>
+            {admin && <h2>Search Student Information in {admin.dorm_id} by Room Number </h2>}
             <form onSubmit={handleSearch} style={{ marginBottom: '20px' }}>
                 <div style={styles.formGroup}>
                     <label htmlFor="roomNumber" style={styles.label}>Room Number</label>
