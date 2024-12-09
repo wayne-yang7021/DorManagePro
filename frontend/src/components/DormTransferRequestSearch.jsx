@@ -3,7 +3,6 @@ import { useAuth } from "../context/authContext";
 
 function DormTransferRequestSearch() {
     const {admin} = useAuth()
-    const [searchDorm, setSearchDorm] = useState('');
     const [studentData, setStudentData] = useState([]);
     const [error, setError] = useState('');
     const [showTable, setShowTable] = useState(true); // 控制表格顯示

@@ -57,9 +57,9 @@ function AdminInformation() {
             <AdminNavbar />
             <div style={styles.container}>
                 <h1 style={styles.heading}>Admin Information</h1>
-                <p style={styles.paragraph}>
+                {/* <p style={styles.paragraph}>
                     This is the Admin Information page where you can see the admin's personal information.
-                </p>
+                </p> */}
                 <table style={styles.table}>
                     <thead>
                         <tr>

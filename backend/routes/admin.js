@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { eq, and } = require('drizzle-orm')
+const { eq, and, isNull, isNotNull} = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
-const { user,  bed , snackOption, semester, snackRecord, moveApplication, admin, maintenanceRecord} = require('../models/schema'); // Schema
+const { user,  bed , snackOption, semester, snackRecord, moveApplication, admin, maintenanceRecord, moveRecord} = require('../models/schema'); // Schema
 
 router.post('/login', async (req, res) => {
     const db = getDb();
@@ -93,7 +93,35 @@ router.post('/login', async (req, res) => {
       res.status(500).json({ message: 'Server error during logout' });
     }
   });
-
+  
+// 搜尋所有正在住的人
+router.get('/all_living_student_search', async (req, res) => {
+    const { dorm_id} = req.query;  
+    try {
+        const db = getDb();
+        const result = await db
+        .select({
+            student_id: user.studentId,
+            email: user.email,
+            phone: user.phone,
+            dorm_id: user.dormId,
+            b_id: user.bId,
+            due_date: user.dueDate,
+            move_in_date: moveRecord.moveInDate
+        })
+        .from(user)
+        .leftJoin(moveRecord, eq(user.ssn, moveRecord.ssn))
+        .where(and(eq(user.dormId, dorm_id),isNotNull(moveRecord.moveInDate) ,isNull(moveRecord.moveOutDate))) // 住在此宿舍中並且還沒搬出去
+        .orderBy(moveRecord.moveInDate);
+  
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Student not found' });
+        }
+        res.json(result);
+        } catch (err) {
+        res.status(500).json({ error: err.message });
+        }
+  });
 // 根據 student_id 搜尋學生
 router.get('/student_search', async (req, res) => {
     const { student_id ,dorm_id} = req.query;
@@ -109,7 +137,9 @@ router.get('/student_search', async (req, res) => {
             student_id: user.studentId,
             email: user.email,
             phone: user.phone,
-            dorm_id: user.dormId
+            dorm_id: user.dormId,
+            b_id: user.bId,
+            due_date: user.dueDate
         })
         .from(user)
         .where(and(eq(user.studentId, student_id), eq(user.dormId, dorm_id))) 
@@ -118,7 +148,6 @@ router.get('/student_search', async (req, res) => {
         if (result.length === 0) {
             return res.status(404).json({ error: 'Student not found' });
         }
-        console.log(result)
         res.json(result[0]);
         } catch (err) {
         res.status(500).json({ error: err.message });
@@ -139,8 +168,8 @@ router.get('/student_search', async (req, res) => {
         student_id: user.studentId,
         email: user.email,
         phone: user.phone,
-        room_number: bed.roomNumber, // 从 bed 表中获取房间号
-        dorm_id: bed.dormId,         // 从 bed 表中获取宿舍 ID
+        b_id: user.bId,
+        due_date: user.dueDate
       })
       .from(user)
       .leftJoin(bed, eq(user.bId, bed.bId)) // LEFT JOIN 条件
