@@ -9,7 +9,7 @@ import { AuthProvider } from './context/authContext';
 import LoginPage from './pages/login';
 import { MyProvider } from './context/context';
 import AdminLoginPage from './pages/AdminLoginPage';
-
+import FacilityReservationPage from './pages/FacilityResevation';
 function App() {
     return (
             <AuthProvider>
@@ -26,6 +26,7 @@ function App() {
                             <Route path="/admin_information" element={<AdminInformation />} />
                             <Route path="/login" element={<LoginPage/>} />
                             <Route path="/adminLogin" element={<AdminLoginPage/>} />
+                            <Route path="/facility_reservation" element={<FacilityReservationPage/>} />
                         </Routes>
                     </main>
                 </div>
