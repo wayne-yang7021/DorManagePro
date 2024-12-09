@@ -117,6 +117,3 @@ const styles = {
 };
 
 export default AdminLoginPage;
-
-// admin1@example.com
-// M665645410

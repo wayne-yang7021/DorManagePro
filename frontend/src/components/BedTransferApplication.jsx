@@ -2,38 +2,63 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/authContext';
 import { useMyContext } from '../context/context';
 
-const DormTransferApplication = () => {
+const BedTransferApplication = () => {
   const { user } = useAuth();
   const { applications } = useMyContext();
-  const [applicationReason, setApplicationReason] = useState('');
-  const [selectedDorm, setSelectedDorm] = useState(null);
+  const [selectedBed, setSelectedBed] = useState(null);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleDormSelection = (dormId) => {
-    setSelectedDorm(dormId === selectedDorm ? null : dormId); // Deselect if already selected
+  const handleBedSelection = (bedId) => {
+    setSelectedBed(bedId === selectedBed ? null : bedId); // Deselect if already selected
   };
 
+
   const dormData = [
-    { dorm_id: 'DORM01', name: '男一舍' },
-    { dorm_id: 'DORM02', name: '男二舍' },
-    { dorm_id: 'DORM03', name: '男三舍' },
-    { dorm_id: 'DORM04', name: '男四舍' },
-    { dorm_id: 'DORM05', name: '男五舍' },
+    { dorm_id: 'DORM02', b_id: '111A' },
+    { dorm_id: 'DORM02', b_id: '222B' },
+    { dorm_id: 'DORM02', b_id: '333C' },
+    { dorm_id: 'DORM02', b_id: '444D' },
   ];
 
+//   const emptyBedSearch = async (e) => {
+//     e.preventDefault();
+
+//     try {
+//         const response = await fetch(
+//             `http://localhost:8888/api/admin/student_search?student_id=${studentId}&dorm_id=${admin.dorm_id}`
+//         );
+        
+//         if (!response.ok) {
+//             throw new Error('Student not found');
+//         }
+
+//         const data = await response.json();
+//         setStudentData([data]); // 包裝成陣列以便渲染
+//         setError('');
+//     } catch (err) {
+//         setStudentData(null);
+//         setError(err.message || 'An error occurred');
+//     }
+// };
+
   const handleSubmitApplication = async () => {
-    if (!selectedDorm) {
-      setError('Please select a dorm to proceed.');
+    if (!selectedBed) {
+      setError('Please select a bed to proceed.');
       return;
     }
     setError(null);
-    console.log(user.ssn);
     try {
-      const response = await fetch('http://localhost:8888/api/user/dorm_change_request', {
+      const response = await fetch('http://localhost:8888/api/user/bed_transfer_request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ssn: user.ssn, move_to: selectedDorm, semester: '111-1' }),
+        body: JSON.stringify({
+          ssn: user.ssn,
+          move_in_bed: selectedBed,
+          original_bed: user.bId,
+          semester: '113-1',
+          dorm_id: user.dormId
+        }),
       });
 
       if (!response.ok) {
@@ -45,11 +70,35 @@ const DormTransferApplication = () => {
     } catch (err) {
       setError(err.message);
     }
+
+    // Do bed transfer update
+    setError(null);
+    try {
+      const response = await fetch(`http://localhost:8888/api/user/bed_transfer_update`, {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            ssn: user.ssn, 
+            fmove_in_bed: selectedBed
+          }),
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to update application.');
+      }
+    } catch (err) {
+        console.error('Error updating application:', err);
+        setError(err.message);
+    }
+
   };
 
   return (
     <div className="reservation-container">
-      <h1>Dorm Transfer Application</h1>
+      <h1>Bed Transfer Application</h1>
 
       <div className="transfer-application-wrapper">
         {applicationSubmitted ? (
@@ -58,25 +107,25 @@ const DormTransferApplication = () => {
           </div>
         ) : (
           <>
-            <p style={{ textAlign: 'center', color: '#555' }}>Select the dorm you wish to transfer to:</p>
+            <p style={{ textAlign: 'center', color: '#555' }}>Select the bed you wish to transfer to:</p>
             {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
-              {dormData.map((dorm) => (
+              {dormData.map((bed) => (
                 <div
-                  key={dorm.dorm_id}
+                  key={bed.b_id}
                   style={{
-                    border: selectedDorm === dorm.dorm_id ? '2px solid #4CAF50' : '1px solid #ccc',
+                    border: selectedBed === bed.b_id ? '2px solid #4CAF50' : '1px solid #ccc',
                     borderRadius: '8px',
                     padding: '15px',
                     cursor: 'pointer',
                     textAlign: 'center',
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    backgroundColor: selectedDorm === dorm.dorm_id ? '#f9fff9' : '#fff',
+                    backgroundColor: selectedBed === bed.b_id ? '#f9fff9' : '#fff',
                     transition: 'all 0.3s ease',
                   }}
-                  onClick={() => handleDormSelection(dorm.dorm_id)}
+                  onClick={() => handleBedSelection(bed.b_id)}
                 >
-                  <h3 style={{ margin: '0 0 10px', color: '#333' }}>{dorm.name}</h3>
+                  <h3 style={{ margin: '0 0 10px', color: '#333' }}>{bed.b_id}</h3>
                 </div>
               ))}
             </div>
@@ -106,13 +155,13 @@ const DormTransferApplication = () => {
         <div className="previous-applications">
           <h2>Your Previous Applications</h2>
           {applications.length === 0 ? (
-            <p className="no-applications">No previous dorm transfer applications found.</p>
+            <p className="no-applications">No previous bed transfer applications found.</p>
           ) : (
             <table className="applications-table">
               <thead>
                 <tr>
                   <th>Date</th>
-                  <th>Dorm ID</th>
+                  <th>Bed ID</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -133,4 +182,4 @@ const DormTransferApplication = () => {
   );
 };
 
-export default DormTransferApplication;
+export default BedTransferApplication;

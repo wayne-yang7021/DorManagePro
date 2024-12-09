@@ -12,9 +12,13 @@ const app = express();
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
 
 
+// app.use(cors({
+//   origin: 'http://localhost:3000',  // Frontend's URL
+//   credentials: true
+// }));
 app.use(cors({
-  origin: 'http://localhost:3000',  // Frontend's URL
-  credentials: true
+  origin: true, // 允許所有來源
+  credentials: true // 允許傳遞 cookie
 }));
 
 app.use(express.json());
@@ -108,7 +112,7 @@ app.get('/api/user', async (req, res) => {
       dormId: foundUser[0].dormId,
       email: foundUser[0].email,
       phone: foundUser[0].phone,
-      b_id: foundUser[0].b_id,
+      bId: foundUser[0].bId,
 
     });
   } catch (error) {

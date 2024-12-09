@@ -3,7 +3,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useMyContext } from '../context/context';
 import { useAuth } from '../context/authContext';
-import './ReserveFacility.css';
+// import './ReserveFacility.css';
 
 const hours = [
   '08:00', '09:00', '10:00', '11:00', '12:00',
