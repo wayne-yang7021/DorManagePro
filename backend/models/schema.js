@@ -55,6 +55,7 @@ const snackRecord = pgTable('snack_record', {
   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   semester: varchar('semester', 20).notNull().references(() => semester.semester), // 外鍵指向 SEMESTER
   dormId: varchar('dorm_id', 50).notNull(),
+  sName: varchar('s_name', 100).notNull(),
 });
 
 // SNACK_OPTION 表
@@ -105,4 +106,5 @@ module.exports = {
   facility,
   bookRecord,
   maintenanceRecord,
+  semester
 };

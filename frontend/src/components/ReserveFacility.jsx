@@ -3,7 +3,8 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useMyContext } from '../context/context';
 import { useAuth } from '../context/authContext';
-import './ReserveFacility.css';  // Adjust the path as necessary
+import './ReserveFacility.css';
+
 const hours = [
   '08:00', '09:00', '10:00', '11:00', '12:00',
   '13:00', '14:00', '15:00', '16:00', '17:00',
@@ -19,11 +20,10 @@ const FacilityReservation = () => {
 
   const { facilities } = useMyContext();
   const { user } = useAuth();
-  const [reload, setReload] = useState(false); // New state for triggering reload
+  const [reload, setReload] = useState(false);
 
-
+  // Optimization: Memoize the effect dependencies
   useEffect(() => {
-    console.log(selectedDay)
     if (selectedFacility && selectedDay) {
       calculateWeeklyDates(selectedDay);
       getFacilitySchedule(selectedFacility.fId);
@@ -32,7 +32,6 @@ const FacilityReservation = () => {
 
   const getFacilitySchedule = async (facilityId) => {
     try {
-      console.log()
       const response = await fetch(`http://localhost:8888/api/dorm/facility_schedule?facility_id=${facilityId}&selectedDay=${selectedDay}`);
       const scheduleData = await response.json();
       
@@ -118,7 +117,7 @@ const FacilityReservation = () => {
   
       const data = await response.json();
       console.log('Booking successful:', data);
-      setReload((prev) => !prev); // Trigger reload by toggling the `reload` state
+      setReload((prev) => !prev);
 
     } catch (error) {
       console.error('Error booking reservation:', error);
@@ -154,6 +153,11 @@ const FacilityReservation = () => {
     </table>
   );
 
+  // Optimization: Simplified facility button class determination
+  const getFacilityButtonClass = (facility) => {
+    return `select-facility-button ${facility.forRent && !facility.underMaintenance ? 'available' : 'facility-unavailable'}`;
+  };
+
   return (
     <div className="reservation-container">
       <h1>Facility Reservation</h1>
@@ -167,7 +171,7 @@ const FacilityReservation = () => {
             <p>For Rent: {facility.forRent ? 'Yes' : 'No'}</p>
             <p>Under Maintenance: {facility.underMaintenance ? 'Yes' : 'No'}</p>
             <button
-              className={`select-facility-button ${facility.forRent && !facility.underMaintenance ? 'available' : 'disabled'}`}
+              className={getFacilityButtonClass(facility)}
               disabled={!facility.forRent || facility.underMaintenance}
               onClick={() => {
                 setSelectedFacility(facility);

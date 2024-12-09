@@ -35,7 +35,6 @@ router.get('/facility_schedule', async (req, res) => {
     endOfDay.setHours(23, 59, 59, 999); // End of the day
     endOfDay.setHours(endOfDay.getHours() + 8); // Subtract 8 hours
 
-    console.log(startOfDay, endOfDay)
 
     const reservations = await db
       .select()
@@ -48,7 +47,6 @@ router.get('/facility_schedule', async (req, res) => {
         )
       );
 
-    console.log(reservations)
     res.json(reservations);
   } catch (err) {
     res.status(500).json({ error: err.message });
