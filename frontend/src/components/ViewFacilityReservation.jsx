@@ -110,7 +110,7 @@ const styles = {
         margin: '20px auto',
         border: '1px solid #ddd',
         borderRadius: '8px',
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#555',
     },
     table: {
         width: '100%',
@@ -120,7 +120,6 @@ const styles = {
     th: {
         border: '1px solid #ddd',
         padding: '10px',
-        backgroundColor: '#f2f2f2',
         textAlign: 'left',
     },
     td: {
