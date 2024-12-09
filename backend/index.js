@@ -11,20 +11,11 @@ const bcrypt = require('bcrypt');
 const app = express();
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
 
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:1234'];
 
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or Postman)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true, // Allow cookies and other credentials
-};
+app.use(cors({
+  origin: 'http://localhost:3000',  // Frontend's URL
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -140,10 +131,6 @@ app.post('/api/logout', (req, res) => {
   }
 });
 
-// const network = '10.120.247.233'
-const network = 'localhost'
-
-
-app.listen(8888, network, () => {
-  console.log(`Server running on http://${network}:8888`);
+app.listen(8888, () => {
+  console.log('Server running on http://localhost:8888');
 });

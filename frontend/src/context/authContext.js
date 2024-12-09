@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [admin, setAdmin] = useState(null); // Holds admin data
 
     useEffect(() => {
@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
     
         initializeAuth();
     }, []);
+    
 
 
     const checkAuthentication = async () => {
@@ -129,6 +130,7 @@ export const AuthProvider = ({ children }) => {
         }
         setUser(null);
         return true;
+
         
     };
 
