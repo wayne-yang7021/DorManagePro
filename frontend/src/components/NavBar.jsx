@@ -85,12 +85,6 @@ const Navbar = () => {
     <nav style={styles.navbar}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <h1 style={styles.brand}>DorManagePro</h1>
-        <button 
-          style={styles.menuToggle} 
-          onClick={toggleMenu}
-        >
-          ☰
-        </button>
       </div>
       <ul
         style={{
