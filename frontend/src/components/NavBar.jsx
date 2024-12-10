@@ -98,34 +98,70 @@ const Navbar = () => {
           ...(isOpen ? styles.menuVisible : {}),
         }}
       >
-        {[
-          { href: "/", text: "Home" },
-          { href: "/about", text: "Apply for transfer" },
-          { href: "/facility_reservation", text: "View facility reservation" },
-          { 
-            href: "/user_information", 
-            text: !loading && user ? user.studentId : "Student ID" 
-          },
-          { href: "#", text: "Logout", onClick: handleLogout }
-        ].map((item, index) => (
-          <li key={index}>
-            <a
-              href={item.href}
-              style={styles.link}
-              onClick={item.onClick}
-              onMouseDown={(e) => {
-                e.target.style.border = '2px inset #c3c7cb';
-                e.target.style.boxShadow = 'none';
-              }}
-              onMouseUp={(e) => {
-                e.target.style.border = '2px outset #c3c7cb';
-                e.target.style.boxShadow = 'inset -1px -1px 1px #808080, inset 1px 1px 1px white';
-              }}
-            >
-              {item.text}
-            </a>
-          </li>
-        ))}
+        <li>
+          <a
+            href="/"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="/about"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+          >
+            Apply for transfer
+          </a>
+        </li>
+        <li>
+          <a
+            href="/facility_reservation"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+          >
+            View facility reservation
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="/discussion_board"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+          >
+            Join discussion board
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="/user_information"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+          >
+            {!loading && user ? user.studentId : "student id"}
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+            onClick={handleLogout}
+          >
+            Logout
+          </a>
+        </li>
       </ul>
     </nav>
   );

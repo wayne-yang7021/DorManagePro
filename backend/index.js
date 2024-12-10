@@ -6,7 +6,7 @@ const cors = require('cors');
 const { getDb } = require('./models/index')
 const { user, bed, admin } = require('./models/schema'); // Import your user schema
 const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 const app = express();
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
@@ -108,7 +108,7 @@ app.get('/api/user', async (req, res) => {
       email: foundUser[0].email,
       phone: foundUser[0].phone,
       bId: foundUser[0].bId,
-
+      dueDate: foundUser[0].dueDate
     });
   } catch (error) {
     res.status(401).json({ message: 'Invalid or expired token' });

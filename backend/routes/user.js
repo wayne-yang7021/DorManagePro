@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { eq, and, transaction } = require('drizzle-orm')
+const { eq, and, transaction, desc } = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
-const { user,  bed, snackOption, maintenanceRecord, bookRecord, moveRecord, moveApplication } = require('../models/schema'); // Schema
+const { user,  bed, snackOption, maintenanceRecord, bookRecord, moveRecord, moveApplication, discussionBoard } = require('../models/schema'); // Schema
 
 router.post('/maintenance', async (req, res) => {
   const { ssn, description } = req.body;
@@ -192,7 +192,7 @@ router.post('/bed_transfer_request', async (req, res) => {
     const db = getDb();
     const { ssn, semester, move_in_bed, original_bed, dorm_id} = req.body;
     const result = await db
-      .insert(moveRecord)
+      .insert(moveApplication)
       .values({
         ssn: ssn,
         semester: semester,
@@ -206,6 +206,48 @@ router.post('/bed_transfer_request', async (req, res) => {
       message: 'Dorm change request submitted successfully',
       data: result,
     });
+  } catch (err) {
+    console.log(err.message)
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/post', async(req, res)=>{
+  try {
+    const db = getDb();
+    const { ssn, dorm_id, messages } = req.body;
+    const result = await db
+      .insert(discussionBoard)
+      .values({
+        ssn,
+        dormId: dorm_id,
+        messages
+      })
+    // Respond with success
+    res.status(201).json({
+      message: 'Successfully posted!',
+      data: result,
+    });
+  } catch (err) {
+    console.log(err.message)
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/get_post_list', async(req, res) =>{
+  try {
+    const db = getDb();
+    const { dorm_id } = req.query;
+    const result = await db
+    .select()
+    .from(discussionBoard)
+    .where(eq(discussionBoard.dormId, dorm_id))
+    .orderBy(desc(discussionBoard.sentTime));
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+    res.json(result);
   } catch (err) {
     console.log(err.message)
     res.status(500).json({ error: err.message });

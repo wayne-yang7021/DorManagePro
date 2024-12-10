@@ -6,12 +6,6 @@ const MyContext = createContext();
 
 // Create a Provider Component
 const MyProvider = ({ children }) => {
-    const [state, setState] = useState({
-        // Define your state here
-        user: null,
-        isAuthenticated: false,
-    });
-
     const { user } = useAuth();
     const [ snackOption, setSnackOption ] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -19,7 +13,7 @@ const MyProvider = ({ children }) => {
     const [success, setSuccess] = useState('');
     const [facilities, setFacilities] = useState([]);
     const [applications, setApplications] = useState([]);
-
+    const [posts, setPosts] = useState([]);
 
 
     useEffect(() => {
@@ -27,6 +21,7 @@ const MyProvider = ({ children }) => {
         getSnackOption();
         getAllFacility();
         getApplications();
+        getPosts();
       }
     },[user])
 
@@ -48,9 +43,11 @@ const MyProvider = ({ children }) => {
   
         if (response.ok) {
           setSuccess('Maintenance request submitted successfully');
+          console.log(success)
         } else {
           setError(result.message || 'Failed to submit the request');
           setLoading(false)
+          console.log(error)
           return false
         }
       } catch (error) {
@@ -115,20 +112,34 @@ const MyProvider = ({ children }) => {
         }
       };
 
-      const getReservedFacility = async () => {
-        try {
-          const response = await fetch(`http://localhost:8888/api/user/dorm_facility?dormId=${user.dormId}`);
-          const data = await response.json()
-          setFacilities(data);
-        } catch (error) {
-          console.error('Error fetching facilities:', error);
-        }
-      };
+      // const getReservedFacility = async () => {
+      //   try {
+      //     const response = await fetch(`http://localhost:8888/api/user/dorm_facility?dormId=${user.dormId}`);
+      //     const data = await response.json()
+      //     setFacilities(data);
+      //   } catch (error) {
+      //     console.error('Error fetching facilities:', error);
+      //   }
+      // };
 
+      const getPosts = async () => {
+        try {
+            const response = await fetch(`http://localhost:8888/api/user/get_post_list?dorm_id=${user.dormId}`);
+
+            if (!response.ok) {
+                throw new Error('Request not found');
+            }
+            const data = await response.json();
+            setPosts(data);
+        } catch (error) {
+            setPosts([])
+            console.log("Failed to get post: ", error.message)
+        }
+    }
 
 
     return (
-        <MyContext.Provider value={{ snackOption, getSnackOption, applyMaintenance, loading, facilities, getAllFacility, applications }}>
+        <MyContext.Provider value={{ snackOption, getSnackOption, applyMaintenance, loading, facilities, getAllFacility, getPosts, posts, applications }}>
             {children}
         </MyContext.Provider>
     );

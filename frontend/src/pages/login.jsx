@@ -1,116 +1,174 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/authContext';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-    const { login, user } = useAuth();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const navigate = useNavigate();
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();  // Prevent form from submitting and refreshing the page
-        const success = await login(email, password);  // Call login and await response
-        if (success) {
-            console.log("Login successful");
-            navigate('/');  // Redirect to home page
-        } else {
-            console.log("Error logging in");
-        }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const success = await login(email, password);
+    if (success) {
+      console.log("Login successful");
+      navigate("/");
+    } else {
+      console.log("Error logging in");
+    }
+  };
 
-    return (
-        <div style={styles.container}>
-            <h2 style={styles.title}>Login</h2>
-            <form onSubmit={handleSubmit} style={styles.form}>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>Student ID:</label>
-                    <input
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        style={styles.input}
-                        required
-                    />
-                </div>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>SSN:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={styles.input}
-                        required
-                    />
-                </div>
-                <button type="submit" style={styles.button}>Login</button>
-            </form>
-            <div style={styles.registerContainer}>
-                <p style={styles.registerText}>
-                    You're a admin?{' '}
-                    <a href="/adminLogin" style={styles.registerLink}>admin login</a>
-                </p>
-            </div>
+  return (
+    <div style={styles.container}>
+      {/* Branding Section */}
+      <div style={styles.branding}>
+        <h1 style={styles.brand}>DorManagePro</h1>
+      </div>
+
+      {/* Login Card */}
+      <div style={styles.card}>
+        <p style={styles.title}>Student Login</p>
+        {/* <p style={styles.subtitle}>Stay updated on your dormitory details</p> */}
+
+        {/* Login Form */}
+        <form onSubmit={handleSubmit} style={styles.form}>
+          {/* Email Field */}
+          <div style={styles.inputGroup}>
+            <label htmlFor="email" style={styles.label}>
+              Student ID
+            </label>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={styles.input}
+              required
+              placeholder="Enter your student ID"
+            />
+          </div>
+
+          {/* Password Field */}
+          <div style={styles.inputGroup}>
+            <label htmlFor="password" style={styles.label}>
+              Ssn
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={styles.input}
+              required
+              placeholder="Enter your Ssn"
+            />
+          </div>
+
+          <button type="submit" style={styles.button}>
+            Login
+          </button>
+        </form>
+
+        {/* Admin Section */}
+        <div style={styles.adminLink}>
+          <p>
+            Admin?{" "}
+            <a href="/adminLogin" style={styles.adminLoginLink}>
+              Click here for admin login
+            </a>
+          </p>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 const styles = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#f4f4f4',
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-    },
-    title: {
-        marginBottom: '20px',
-        color: 'black'
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '300px',
-    },
-    inputGroup: {
-        marginBottom: '15px',
-    },
-    label: {
-        marginBottom: '5px',
-        fontSize: '14px',
-        color: '#333',
-    },
-    input: {
-        padding: '10px',
-        width: '100%',
-        boxSizing: 'border-box',
-    },
-    button: {
-        padding: '10px',
-        backgroundColor: 'gray',
-        color: '#fff',
-        cursor: 'pointer',
-        fontSize: '16px',
-        width: '100%',
-        boxSizing: 'border-box',
-        marginTop: '10px',
-    },
-    registerContainer: {
-        marginTop: '20px',
-        textAlign: 'center',
-    },
-    registerText: {
-        fontSize: '14px',
-        color: '#555',
-    },
-    registerLink: {
-        color: 'gray',
-        textDecoration: 'none',
-        fontWeight: 'bold',
-    },
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100vh",
+    background: "linear-gradient(135deg, #f9f9f9, #e3e3e3)",
+    fontFamily: '"Poppins", sans-serif',
+    position: "relative",
+  },
+  branding: {
+    position: "absolute",
+    top: "20px",
+    left: "40px",
+  },
+  brand: {
+    fontSize: "28px",
+    fontWeight: "700",
+    color: "#0a66c2",
+    margin: "0",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: "10px",
+    padding: "40px",
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+    maxWidth: "400px",
+    width: "100%",
+    textAlign: "center",
+  },
+  title: {
+    fontSize: "23px",
+    fontWeight: "1000",
+    color: "#333",
+    marginBottom: "20px",
+  },
+  subtitle: {
+    fontSize: "14px",
+    color: "#555",
+    marginBottom: "20px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+  },
+  inputGroup: {
+    textAlign: "left",
+  },
+  label: {
+    fontSize: "14px",
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: "8px",
+    display: "block",
+  },
+  input: {
+    padding: "12px",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
+    fontSize: "14px",
+    width: "100%",
+    boxSizing: "border-box",
+  },
+  button: {
+    padding: "12px",
+    marginTop: "15px",
+    borderRadius: "8px",
+    border: "none",
+    background: "#0a66c2",
+    color: "#fff",
+    fontSize: "16px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    marginBottom: "10px",
+  },
+  adminLink: {
+    marginTop: "20px",
+    fontSize: "14px",
+    color: "#333",
+  },
+  adminLoginLink: {
+    color: "#0a66c2",
+    textDecoration: "none",
+    fontWeight: "600",
+  },
 };
 
 export default LoginPage;

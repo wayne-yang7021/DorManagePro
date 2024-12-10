@@ -15,7 +15,7 @@ function UserInformation() {
         );
     }
 
-    const { email, dorm_id, phone, bId, dueDate } = user;
+    const { email, dormId, phone, bId, dueDate} = user;
 
     const styles = {
         container: {
@@ -93,7 +93,7 @@ function UserInformation() {
                         </tr>
                         <tr>
                             <td style={styles.td}>Dorm ID</td>
-                            <td style={styles.td}>{dorm_id}</td>
+                            <td style={styles.td}>{dormId}</td>
                         </tr>
                         <tr>
                             <td style={styles.td}>Bed</td>

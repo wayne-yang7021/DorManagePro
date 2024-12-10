@@ -15,7 +15,7 @@ function AdminInformation() {
         );
     }
 
-    const { email, dorm_id, phone } = admin;
+    const { email, dormId, phone } = admin;
 
     const styles = {
         container: {
@@ -74,7 +74,7 @@ function AdminInformation() {
                         </tr>
                         <tr>
                             <td style={styles.td}>Dorm ID</td>
-                            <td style={styles.td}>{dorm_id}</td>
+                            <td style={styles.td}>{dormId}</td>
                         </tr>
                         <tr>
                             <td style={styles.td}>Phone</td>

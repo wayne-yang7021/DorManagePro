@@ -3,6 +3,7 @@ import Navbar from '../components/NavBar';
 import FacilityReservation from '../components/ReserveFacility';
 import SnackRegistration from '../components/SnackRegister';
 import FacilityMaintenanceForm from '../components/FacilityMaintenanceForm';
+import DiscussionBoard from './DiscussionBoard';
 
 import { useAuth } from "../context/authContext";
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +35,8 @@ function Home() {
                 return <SnackRegistration />;
             case 'facilityMaintenance':
                 return <FacilityMaintenanceForm />;
+            case 'discussionBoard':
+                return <DiscussionBoard />
             default:
                 return null;
         }

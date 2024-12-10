@@ -98,6 +98,7 @@ router.post('/login', async (req, res) => {
 // 搜尋所有正在住的人
 router.get('/all_living_student_search', async (req, res) => {
     const { dorm_id} = req.query;  
+    // console.log("test", dorm_id)
     try {
         const db = getDb();
         const result = await db
@@ -108,12 +109,10 @@ router.get('/all_living_student_search', async (req, res) => {
             dorm_id: user.dormId,
             b_id: user.bId,
             due_date: user.dueDate,
-            move_in_date: moveRecord.moveInDate
         })
         .from(user)
-        .leftJoin(moveRecord, eq(user.ssn, moveRecord.ssn))
-        .where(and(eq(user.dormId, dorm_id),isNotNull(moveRecord.moveInDate) ,isNull(moveRecord.moveOutDate))) // 住在此宿舍中並且還沒搬出去
-        .orderBy(moveRecord.moveInDate)
+        .where(eq(user.dormId, dorm_id)) // 住在此宿舍中並且還沒搬出去
+        .orderBy(user.studentId)
         .limit(200);
   
         if (result.length === 0) {
@@ -191,17 +190,16 @@ router.get('/student_search', async (req, res) => {
 // Snack Announcement - 發佈零食公告
 router.post('/snack_announcement', async (req, res) => {
     const { ssn, semester, dorm_id, snack_name } = req.body;
-    console.log(ssn)
     try {
         const db = getDb();
         // 新增零食選項
-        await db.insert(snackOption).values({
+        const result = await db
+        .insert(snackOption).values({
             ssn: ssn,
             semester: semester,
             dormId: dorm_id,
             sName: snack_name,
         });
-  
       res.status(201).json({ message: 'Snack announcement created successfully' });
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -209,21 +207,20 @@ router.post('/snack_announcement', async (req, res) => {
 });
 
 // Snack Announcement Search - 查詢發布的零食公告
-router.post('/snack_announcement_search', async (req, res) => {
-    const {semester, dorm_id} = req.body;
-    console.log(semester, dorm_id)
+router.get('/snack_announcement_search', async (req, res) => {
+    const {semester, dorm_id} = req.query;
     try {
         const db = getDb();
         
         const result = await db
         .select({
             semester: snackRecord.semester,
-            snack: snackRecord.sName
+            snack: snackRecord.sName,
+            dormId: snackRecord.dormId
         })
         .from(snackRecord)
         .where(and(eq(snackRecord.semester, semester), eq(snackRecord.dormId, dorm_id))) 
       
-      console.log(result)
       if (result.length === 0) {
         return res.status(404).json({ error: 'Snack anouncement not found' });
       }
@@ -341,11 +338,19 @@ router.get('/bed_transfer_request_search', async (req, res) => {
   try {
       const db = getDb();
       const result = await db
-      .select()
+      .select({
+        originalBed: moveApplication.originalBed,
+        moveInBed: moveApplication.moveInBed,
+        status : moveApplication.status,
+        studentId: user.studentId,
+        ssn: moveApplication.ssn,
+        mid: moveApplication.mid,
+        dormId: moveApplication.dormId
+      })
       .from(moveApplication)
       .leftJoin(user, eq(user.ssn, moveApplication.ssn))
       .where(eq(moveApplication.dormId, applying_dorm_id))
-      .order(moveApplication.applyTime);
+      .orderBy(moveApplication.applyTime);
 
     if (result.length === 0) {
       return res.status(404).json({ error: 'Dorm transfer request not found' });
@@ -359,8 +364,7 @@ router.get('/bed_transfer_request_search', async (req, res) => {
 
 // Bed Transfer Request - 宿舍內轉更新
 router.put('/bed_transfer_update', async (req, res) => {
-  const { m_id, move_in_bed } = req.body;
-
+  const { m_id, original_bed, move_in_bed, ssn, dorm_id} = req.body;
   try {
     const db = getDb();
 
@@ -375,9 +379,26 @@ router.put('/bed_transfer_update', async (req, res) => {
       const updateUser = await trx
         .update(user)
         .set({ bId: move_in_bed })
-        .where(eq(user.mId, m_id));
+        .where(eq(user.ssn, ssn));
 
       if (!updateUser) {
+        throw new Error('Failed to update user bed assignment');
+      }
+      const updateMoveInBed = await trx
+        .update(bed)
+        .set({ ssn: ssn})
+        .where(and(eq(bed.bId, move_in_bed), eq(bed.dormId, dorm_id)));
+
+      if (!updateMoveInBed) {
+        throw new Error('Failed to update user bed assignment');
+      }
+
+      const updateOriginalBed = await trx
+        .update(bed)
+        .set({ ssn: null})
+        .where(and(eq(bed.bId, original_bed), eq(bed.dormId, dorm_id)));
+
+      if (!updateOriginalBed) {
         throw new Error('Failed to update user bed assignment');
       }
 
@@ -385,7 +406,7 @@ router.put('/bed_transfer_update', async (req, res) => {
       const approveApplication = await trx
         .update(moveApplication)
         .set({ status: 'approved' })
-        .where(eq(moveApplication.mId, m_id));
+        .where(eq(moveApplication.mid, m_id));
 
       if (!approveApplication) {
         throw new Error('Failed to update move application to approved');
@@ -395,7 +416,7 @@ router.put('/bed_transfer_update', async (req, res) => {
       const denyOtherApplications = await trx
         .update(moveApplication)
         .set({ status: 'denied' })
-        .where(ne(moveApplication.mId, m_id));
+        .where(ne(moveApplication.mid, m_id));
 
       if (!denyOtherApplications) {
         throw new Error('Failed to update other move applications to denied');
@@ -408,31 +429,6 @@ router.put('/bed_transfer_update', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
-
-  // // Do bed transfer update
-  // setError(null);
-  // try {
-  //   const response = await fetch(`http://localhost:8888/api/user/bed_transfer_update`, {
-  //       method: 'PUT',
-  //       headers: {
-  //           'Content-Type': 'application/json',
-  //       },
-  //       credentials: 'include',
-  //       body: JSON.stringify({
-  //         ssn: user.ssn, 
-  //         fmove_in_bed: selectedBed
-  //       }),
-  //   });
-
-  //   if (!response.ok) {
-  //       throw new Error('Failed to update application.');
-  //   }
-  // } catch (err) {
-  //     console.error('Error updating application:', err);
-  //     setError(err.message);
-  // }
 
 
 module.exports = router;
