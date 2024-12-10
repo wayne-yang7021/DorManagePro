@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { eq, and, isNull, isNotNull} = require('drizzle-orm')
+const { eq, and, isNull, isNotNull, ne} = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
   
       res.json({
         ssn: foundAdmin[0].ssn,
-        dorm_id: foundAdmin[0].dormId,
+        dormId: foundAdmin[0].dormId,
         email: foundAdmin[0].email,
         phone: foundAdmin[0].phone, // Optional if the admin has roles
       });
@@ -250,30 +250,6 @@ router.get('/getSemester', async(_, res) =>{
     }
 })
 
-// Dorm Transfer Request Search - 查詢宿舍變更請求
-router.get('/dorm_transfer_request_search', async (req, res) => {
-    const {applying_dorm_id} = req.query;
-    try {
-        const db = getDb();
-        const result = await db
-        .select({
-            student_id: user.studentId,
-            origin_dorm: user.dormId,
-            applying_dorm: moveApplication.dormId
-        })
-        .from(moveApplication)
-        .leftJoin(user, eq(moveApplication.ssn, user.ssn))
-        .where(eq(moveApplication.dormId, applying_dorm_id));
-
-      if (result.length === 0) {
-        return res.status(404).json({ error: 'Dorm transfer request not found' });
-      }
-  
-      res.json(result);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-});
 
 // Maintenance Status Search - 查詢報修狀態
 router.get('/maintenance_status', async (req, res) => {
@@ -358,4 +334,105 @@ router.get('/move_record_search', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// bed Transfer Request Search - 查詢內轉請求
+router.get('/bed_transfer_request_search', async (req, res) => {
+  const {applying_dorm_id} = req.query;
+  try {
+      const db = getDb();
+      const result = await db
+      .select()
+      .from(moveApplication)
+      .leftJoin(user, eq(user.ssn, moveApplication.ssn))
+      .where(eq(moveApplication.dormId, applying_dorm_id))
+      .order(moveApplication.applyTime);
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Dorm transfer request not found' });
+    }
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Bed Transfer Request - 宿舍內轉更新
+router.put('/bed_transfer_update', async (req, res) => {
+  const { m_id, move_in_bed } = req.body;
+
+  try {
+    const db = getDb();
+
+    // Validate the input
+    if (!m_id || !move_in_bed) {
+      return res.status(400).json({ error: 'Invalid request: m_id and move_in_bed are required' });
+    }
+
+    // Start transaction
+    await db.transaction(async (trx) => {
+      // Update user's bed assignment
+      const updateUser = await trx
+        .update(user)
+        .set({ bId: move_in_bed })
+        .where(eq(user.mId, m_id));
+
+      if (!updateUser) {
+        throw new Error('Failed to update user bed assignment');
+      }
+
+      // Update move application to "approved"
+      const approveApplication = await trx
+        .update(moveApplication)
+        .set({ status: 'approved' })
+        .where(eq(moveApplication.mId, m_id));
+
+      if (!approveApplication) {
+        throw new Error('Failed to update move application to approved');
+      }
+
+      // Update other move applications to "denied"
+      const denyOtherApplications = await trx
+        .update(moveApplication)
+        .set({ status: 'denied' })
+        .where(ne(moveApplication.mId, m_id));
+
+      if (!denyOtherApplications) {
+        throw new Error('Failed to update other move applications to denied');
+      }
+    });
+
+    res.status(200).json({ message: 'Bed transfer updated successfully' });
+  } catch (error) {
+    console.error('Error during bed transfer update:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+  // // Do bed transfer update
+  // setError(null);
+  // try {
+  //   const response = await fetch(`http://localhost:8888/api/user/bed_transfer_update`, {
+  //       method: 'PUT',
+  //       headers: {
+  //           'Content-Type': 'application/json',
+  //       },
+  //       credentials: 'include',
+  //       body: JSON.stringify({
+  //         ssn: user.ssn, 
+  //         fmove_in_bed: selectedBed
+  //       }),
+  //   });
+
+  //   if (!response.ok) {
+  //       throw new Error('Failed to update application.');
+  //   }
+  // } catch (err) {
+  //     console.error('Error updating application:', err);
+  //     setError(err.message);
+  // }
+
+
 module.exports = router;

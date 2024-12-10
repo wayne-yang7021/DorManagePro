@@ -3,7 +3,7 @@ import AdminNavbar from '../components/AdminNavBar';
 import InfoSearchByStudentId from '../components/InfoSearchByStudentId';
 import InfoSearchByRoomNumber from '../components/InfoSearchByRoomNumber';
 import SnackAnnouncement from '../components/SnackAnnouncement';
-import DormTransferRequestSearch from '../components/DormTransferRequestSearch';
+import BedTransferRequestSearch from '../components/BedTransferRequestSearch';
 import SnackReservationStatus from '../components/SnackReservationStatus';
 import MaintenanceStatus from '../components/MaintenanceStatusSearch';
 import InfoSearchAllLivingStudent from '../components/InfoSearchAllLivingStudent';
@@ -44,8 +44,8 @@ function Admin() {
                 return <InfoSearchByRoomNumber />;
             case 'snackAnnouncement':
                 return <SnackAnnouncement />;
-            case 'dormTransfer':
-                return <DormTransferRequestSearch />;
+            case 'bedTransfer':
+                return <BedTransferRequestSearch />;
             case 'snackReservation':
                 return <SnackReservationStatus />;
             case 'maintenanceStatus':
@@ -72,8 +72,8 @@ function Admin() {
                         style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'snackReservation' ? '#007bff' : '#e9ecef', color: activeTab === 'snackReservation' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Snack Reservation Status</button>
                     <button onClick={() => setActiveTab('maintenanceStatus')} 
                         style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'maintenanceStatus' ? '#007bff' : '#e9ecef', color: activeTab === 'maintenanceStatus' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Maintenance Status</button>
-                    <button onClick={() => setActiveTab('dormTransfer')} 
-                        style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'dormTransfer' ? '#007bff' : '#e9ecef', color: activeTab === 'dormTransfer' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Dorm Transfer Requests</button>
+                    <button onClick={() => setActiveTab('bedTransfer')} 
+                        style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'bedTransfer' ? '#007bff' : '#e9ecef', color: activeTab === 'bedTransfer' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Bed Transfer Requests</button>
                 </nav>
                 <div style={{ width: '100%', padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px' }}>
                     {renderContent()}
