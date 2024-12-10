@@ -6,16 +6,11 @@ const cors = require('cors');
 const { getDb } = require('./models/index')
 const { user, bed, admin } = require('./models/schema'); // Import your user schema
 const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 const app = express();
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
 
-
-// app.use(cors({
-//   origin: 'http://localhost:3000',  // Frontend's URL
-//   credentials: true
-// }));
 app.use(cors({
   origin: true, // 允許所有來源
   credentials: true // 允許傳遞 cookie
@@ -57,7 +52,8 @@ app.post('/api/login', async (req, res) => {
       }
 
       // Assuming the SSN is encrypted in the database, decrypt it here (use a suitable decryption method)
-      const isSSNValid = await bcrypt.compare(ssn, foundUser[0].ssn); // Assuming SSN is hashed/encrypted using bcrypt
+      // const isSSNValid = await bcrypt.compare(ssn, foundUser[0].ssn); // Assuming SSN is hashed/encrypted using bcrypt
+      const isSSNValid = ssn === foundUser[0].ssn; // Assuming SSN is hashed/encrypted using bcrypt
       if (!isSSNValid) {
           return res.status(401).json({ message: 'Invalid SSN' });
       }
@@ -93,7 +89,6 @@ app.get('/api/user', async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, secretKey);
-    
     // Fetch user from database using decoded token
     const foundUser = await db.select()
       .from(user)

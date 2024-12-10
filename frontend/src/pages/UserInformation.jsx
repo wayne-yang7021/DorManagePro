@@ -1,11 +1,10 @@
 import React from 'react';
-import AdminNavbar from '../components/AdminNavBar';
 import { useAuth } from "../context/authContext";
+import Navbar from '../components/NavBar';
+function UserInformation() {
+    const { user } = useAuth();
 
-function AdminInformation() {
-    const { admin } = useAuth();
-
-    if (!admin) {
+    if (!user) {
         return (
             <div>
                 <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '18px', color: '#721c24' }}>
@@ -15,7 +14,7 @@ function AdminInformation() {
         );
     }
 
-    const { email, dormId, phone } = admin;
+    const { email, dorm_id, phone, bId, dueDate} = user;
 
     const styles = {
         container: {
@@ -54,12 +53,9 @@ function AdminInformation() {
 
     return (
         <div>
-            <AdminNavbar />
+            <Navbar />
             <div style={styles.container}>
-                <h1 style={styles.heading}>Admin Information</h1>
-                {/* <p style={styles.paragraph}>
-                    This is the Admin Information page where you can see the admin's personal information.
-                </p> */}
+                <h1 style={styles.heading}>user Information</h1>
                 <table style={styles.table}>
                     <thead>
                         <tr>
@@ -73,12 +69,20 @@ function AdminInformation() {
                             <td style={styles.td}>{email}</td>
                         </tr>
                         <tr>
-                            <td style={styles.td}>Dorm ID</td>
-                            <td style={styles.td}>{dormId}</td>
-                        </tr>
-                        <tr>
                             <td style={styles.td}>Phone</td>
                             <td style={styles.td}>{phone}</td>
+                        </tr>
+                        <tr>
+                            <td style={styles.td}>Dorm ID</td>
+                            <td style={styles.td}>{dorm_id}</td>
+                        </tr>
+                        <tr>
+                            <td style={styles.td}>Bed</td>
+                            <td style={styles.td}>{bId}</td>
+                        </tr>
+                        <tr>
+                            <td style={styles.td}>Date to move out</td>
+                            <td style={styles.td}>{dueDate}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -87,4 +91,4 @@ function AdminInformation() {
     );
 }
 
-export default AdminInformation;
+export default UserInformation;

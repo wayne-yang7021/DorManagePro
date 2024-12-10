@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, loading, logout, admin } = useAuth();
+  const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
 
 
@@ -128,7 +128,7 @@ const Navbar = () => {
 
         <li>
           <a
-            href="#"
+            href="/user_information"
             style={styles.link}
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}

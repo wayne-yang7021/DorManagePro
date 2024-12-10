@@ -41,7 +41,7 @@ router.get('/facility_schedule', async (req, res) => {
       .from(bookRecord)
       .where(
         and(
-          eq(bookRecord.fId, facility_id),
+          eq(bookRecord.fid, facility_id),
           gte(bookRecord.bookTime, startOfDay),
           lte(bookRecord.bookTime, endOfDay)
         )
@@ -57,6 +57,7 @@ router.get('/facility_schedule', async (req, res) => {
 //Snack Reservation Status - 獲取零食預約情況
 router.get('/snack_reservation_status', async (req, res) => {
   try {
+    const db = getDb();
     const { semester, dorm_id, snack_name } = req.query;
     const result = await db
       .select({
@@ -82,12 +83,12 @@ router.get('/snack_reservation_status', async (req, res) => {
 // empty_bed_in_room - 獲取空床位
 router.get('/get_empty_bed_in_room', async (req, res) => {
   try {
+    const db = getDb();
     const { dorm_id } = req.query;
     const result = await db
       .select()
       .from(bed)
       .where(and(eq(bed.dormId, dorm_id), isNull(bed.ssn)));
-
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });

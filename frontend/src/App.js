@@ -10,6 +10,7 @@ import LoginPage from './pages/login';
 import { MyProvider } from './context/context';
 import AdminLoginPage from './pages/AdminLoginPage';
 import FacilityReservationPage from './pages/FacilityResevation';
+import UserInformation from './pages/UserInformation';
 function App() {
     return (
             <AuthProvider>
@@ -27,6 +28,7 @@ function App() {
                             <Route path="/login" element={<LoginPage/>} />
                             <Route path="/adminLogin" element={<AdminLoginPage/>} />
                             <Route path="/facility_reservation" element={<FacilityReservationPage/>} />
+                            <Route path="/user_information" element={<UserInformation/>} />
                         </Routes>
                     </main>
                 </div>
