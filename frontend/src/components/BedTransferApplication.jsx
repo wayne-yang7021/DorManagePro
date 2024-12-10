@@ -35,10 +35,10 @@ const BedTransferApplication = () => {
   };
 
   useEffect(() => {
-    if (user.dormId) {
+    if (user) {
         emptyBedSearch(); // 頁面載入時自動執行
     }
-}, [user.dormId]); // 確保 dormId 存在且變化時執行
+}, [user]); // 確保 dormId 存在且變化時執行
 
   const handleSubmitApplication = async () => {
     if (!selectedBed) {
