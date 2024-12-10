@@ -1,12 +1,12 @@
 import React from 'react';
 import Navbar from '../components/NavBar';
-import DormTransferApplication from '../components/DormTransferApplication';
+import BedTransferApplication from '../components/BedTransferApplication';
 
 function About() {
     return (
         <div>
             <Navbar/>
-            <DormTransferApplication/>
+            <BedTransferApplication/>
         </div>
     );
 }

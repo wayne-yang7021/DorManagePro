@@ -1,11 +1,12 @@
-const { pgTable, serial, varchar, text, integer, boolean, timestamp, date } = require('drizzle-orm/pg-core');
+// 
+
+const { PrimaryKey, } = require('drizzle-orm/mysql-core');
+const { pgTable, varchar, text, boolean, timestamp, date, uuid } = require('drizzle-orm/pg-core');
 
 // ADMIN 表
 const admin = pgTable('admin', {
   ssn: varchar('ssn', 100).primaryKey(),
-  // username: varchar('username', 100).notNull(),
-  // password: varchar('password', 100).notNull(),
-  dormId: varchar('dorm_id', 50).notNull(),
+  dormId: varchar('dormid', 50).notNull(),
   email: varchar('email', 100),
   phone: varchar('phone', 20),
 });
@@ -13,82 +14,94 @@ const admin = pgTable('admin', {
 // USER 表
 const user = pgTable('user', {
   ssn: varchar('ssn', 100).primaryKey(),
-  // username: varchar('username', 100).notNull(),
-  // password: varchar('password', 100).notNull(), // 不加密密碼
-  studentId: varchar('student_id', 50).notNull(),
-  bId: varchar('b_id', 50), // 外鍵指向 BED
-  phone: varchar('phone', 20),
-  email: varchar('email', 100),
-  dormId: varchar('dorm_id', 50).notNull(),
-  dueDate: date('due_date'),
-  sessionToken: text('session_token'), // 用於存儲會話令牌
+  studentId: varchar('studentid', 50).notNull(),
+  bId: varchar('bid', 50).references(() => bed.bId), // 外鍵指向 BED
+  department: varchar('department', 100).notNull(),
+  phone: varchar('phone', 20).notNull(),
+  email: varchar('email', 100).notNull(),
+  dormId: varchar('dormid', 50).notNull(),
+  dueDate: date('duedate'),
 });
 
 // BED 表
 const bed = pgTable('bed', {
-  bId: varchar('b_id', 50).primaryKey(),
-  dormId: varchar('dorm_id', 50).notNull(),
+  bId: varchar('bid', 50).notNull(),
+  dormId: varchar('dormid', 50).notNull(),
   ssn: varchar('ssn', 50), // 外鍵指向 USER
-  roomNumber: varchar('room_number', 50).notNull(),
+  roomNumber: varchar('roomnumber', 50).notNull(),
+}, (table) =>{
+  return{
+    bed_pk: primaryKey({ columns: [table.bid, table.dormid] }),
+  };
 });
 
 // MOVE_RECORD 表
-const moveRecord = pgTable('move_record', {
-  ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
-  bId: varchar('b_id', 50).notNull().references(() => bed.bId), // 外鍵指向 BED
-  moveInDate: date('move_in_date').notNull(),
-  moveOutDate: date('move_out_date'),
-});
-
-// MOVE_APPLICATION 表
 const moveApplication = pgTable('move_application', {
+  mid: uuid().defaultRandom().primaryKey(),
   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
-  applyId: serial('apply_id').primaryKey(),
-  semester: varchar('semester', 20).notNull().references(() => semester.semester), // 外鍵指向 SEMESTER
-  dormId: varchar('dorm_id', 50).notNull(),
-  applyTime: timestamp('apply_time').defaultNow(),
-  status: varchar('status', 20).notNull(),
+  orignialBed: varchar('orignialbed', 50).notNull().references(() => bed.bId),
+  moveInBed: varchar('moveinbed', 50).notNull().references(() => bed.bId),
+  dormId: varchar('dormid', 50).notNull().references(() => bed.dormId),
+  status: varchar('status', 50).notNull(),
+  applyTime: timestamp('applytime', 50).defaultNow()
 });
 
 // SNACK_RECORD 表
 const snackRecord = pgTable('snack_record', {
   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
   semester: varchar('semester', 20).notNull().references(() => semester.semester), // 外鍵指向 SEMESTER
-  dormId: varchar('dorm_id', 50).notNull(),
-  sName: varchar('s_name', 100).notNull(),
+  dormId: varchar('dormid', 50).notNull(),
+  sName: varchar('sname', 100).notNull(),
 });
 
 // SNACK_OPTION 表
 const snackOption = pgTable('snack_option', {
   ssn: varchar('ssn', 100).notNull().references(() => admin.ssn), // 外鍵指向 USER
   semester: varchar('semester', 20).notNull().references(() => semester.semester), // 外鍵指向 SEMESTER
-  dormId: varchar('dorm_id', 50).notNull(),
-  sName: varchar('s_name', 100).notNull(),
+  dormId: varchar('dormid', 50).notNull(),
+  sName: varchar('sname', 100).notNull(),
 });
 
 // FACILITY 表
 const facility = pgTable('facility', {
-  fId: serial('f_id').primaryKey(),
-  fName: varchar('f_name', 100).notNull(),
-  dormId: varchar('dorm_id', 50).notNull(),
-  forRent: boolean('for_rent').notNull(),
-  underMaintenance: boolean('under_maintenance').notNull(),
+  fid: uuid().defaultRandom().primaryKey(),
+  fName: varchar('fname', 100).notNull(),
+  dormId: varchar('dormid', 50).notNull(),
+  forRent: boolean('forrent').notNull(),
+  underMaintenance: boolean('undermaintenance').notNull(),
 });
 
 // BOOK_RECORD 表
 const bookRecord = pgTable('book_record', {
   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
-  fId: integer('f_id').notNull().references(() => facility.fId), // 外鍵指向 FACILITY
-  isCancelled: boolean('is_cancelled').default(false),
-  bookTime: timestamp('book_time').defaultNow(),
+  fid: uuid().defaultRandom().notNull().references(() => facility.fid), // 外鍵指向 FACILITY
+  isCancelled: boolean('iscancelled').default(false),
+  bookTime: timestamp('booktime').defaultNow(),
+}, (table) => {
+  return{
+    bookRecord_pk: PrimaryKey([table.ssn, table.fid])
+  }
 });
+
+// const bookRecord = pgTable('book_record', {
+//   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // Foreign key to USER
+//   fid: uuid().defaultRandom().notNull().references(() => facility.fid), // Foreign key to FACILITY
+//   isCancelled: boolean('isCancelled').default(false),
+//   bookTime: timestamp('booktime').defaultNow(),
+//   // Define primary key directly in the column configuration
+// }, {
+//   primaryKey: ['ssn', 'fid'], // Primary key combining ssn and fid
+// });
 
 // MAINTENANCE_RECORD 表
 const maintenanceRecord = pgTable('maintenance_record', {
+  mrId: uuid().defaultRandom().primaryKey(),
   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
+  dormId: varchar('dormid', 50).notNull(),
   description: text('description').notNull(),
-  fixedDate: date('fixed_date'),
-  isFinished: boolean('is_finished').default(false),
+  fixedDate: date('fixeddate'),
+  isFinished: boolean('isfinished').default(false),
+  applyTime: timestamp('applytime', 50).defaultNow(),
 });
 
 const semester = pgTable('semester', {  // 學期表 
@@ -99,7 +112,6 @@ module.exports = {
   admin,
   user,
   bed,
-  moveRecord,
   moveApplication,
   snackRecord,
   snackOption,

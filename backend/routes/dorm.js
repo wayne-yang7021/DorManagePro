@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { eq, and, gte, lte } = require('drizzle-orm')
+const { eq, and, gte, lte, isNull } = require('drizzle-orm')
 const { getDb } = require('../models/index')
-const { facility, bookRecord, snackRecord, snackOption } = require('../models/schema'); // Schema
+const { facility, bookRecord, snackRecord, snackOption, bed } = require('../models/schema'); // Schema
 
 
 // Dorm Facility - 獲取所有宿舍設施
@@ -72,6 +72,21 @@ router.get('/snack_reservation_status', async (req, res) => {
           .and(snackOption.sName.eq(snack_name))
       )
       .groupBy(snackOption.sName);
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// empty_bed_in_room - 獲取空床位
+router.get('/get_empty_bed_in_room', async (req, res) => {
+  try {
+    const { dorm_id } = req.query;
+    const result = await db
+      .select()
+      .from(bed)
+      .where(and(eq(bed.dormId, dorm_id), isNull(bed.ssn)));
 
     res.json(result);
   } catch (err) {

@@ -24,7 +24,8 @@ router.post('/login', async (req, res) => {
       }
   
       // Assuming the password is hashed in the database
-      const isPasswordValid = await bcrypt.compare(password, foundAdmin[0].ssn);
+      // const isPasswordValid = await bcrypt.compare(password, foundAdmin[0].ssn);
+      const isPasswardValid = password === foundAdmin[0].ssn
       if (!isPasswordValid) {
         return res.status(401).json({ message: 'Invalid password' });
       }
@@ -337,5 +338,24 @@ router.put('/update_maintenance', async (req, res) => {
     }
 });
 
+// search move record  - 搜尋內轉紀錄
+router.get('/move_record_search', async (req, res) => {
+  try {
+    const db = getDb();
+    const { dorm_id } = req.query;
+    const result = await db
+    .select()
+    .from(moveRecord)
+    .where(eq(moveRecord.dormId, dorm_id));
 
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+    res.json(result);
+    console.log(result)
+  } catch (err) {
+    console.log(err.message)
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;

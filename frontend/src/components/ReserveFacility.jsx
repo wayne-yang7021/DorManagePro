@@ -3,7 +3,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useMyContext } from '../context/context';
 import { useAuth } from '../context/authContext';
-import './ReserveFacility.css';
+// import './ReserveFacility.css';
 
 const hours = [
   '08:00', '09:00', '10:00', '11:00', '12:00',
@@ -26,7 +26,7 @@ const FacilityReservation = () => {
   useEffect(() => {
     if (selectedFacility && selectedDay) {
       calculateWeeklyDates(selectedDay);
-      getFacilitySchedule(selectedFacility.fId);
+      getFacilitySchedule(selectedFacility.fid);
     }
   }, [selectedDay, selectedFacility, reload]);
 
@@ -106,7 +106,7 @@ const FacilityReservation = () => {
         },
         body: JSON.stringify({
           ssn: user.ssn,
-          fId: selectedFacility.fId,
+          fid: selectedFacility.fid,
           isCancelled: false,
           bookTime,
         }),
@@ -165,8 +165,8 @@ const FacilityReservation = () => {
       <div className="facility-list">
         {facilities?.map((facility) => (
           <div
-            key={facility.fId}
-            className={`facility-item ${selectedFacility?.fId === facility.fId ? 'selected' : ''}`}
+            key={facility.fid}
+            className={`facility-item ${selectedFacility?.fid === facility.fid ? 'selected' : ''}`}
           >
             <h2>{facility.fName}</h2>
             <p>For Rent: {facility.forRent ? 'Yes' : 'No'}</p>
@@ -179,9 +179,9 @@ const FacilityReservation = () => {
                 setCalendarVisible(false);
               }}
             >
-              {selectedFacility?.fId === facility.fId ? 'Selected' : 'Select Facility'}
+              {selectedFacility?.fid === facility.fid ? 'Selected' : 'Select Facility'}
             </button>
-            {selectedFacility?.fId === facility.fId && (
+            {selectedFacility?.fid === facility.fid && (
               <div>
                 <button
                   className="toggle-calendar-button"
