@@ -118,11 +118,11 @@ function InfoSearchAllLivingStudent() {
             </button>
 
             {showTable && studentData && studentData.map(student => (
-                <div style={styles.card} key={student.student_id}>
+                <div style={styles.card} key={student.studentId}>
                     <h5>Student Details</h5>
-                    <p><strong>Student ID:</strong> {student.student_id}</p>
-                    <p><strong>Bed:</strong> {student.b_id}</p>
-                    <p><strong>Due date:</strong> {student.due_date}</p>
+                    <p><strong>Student ID:</strong> {student.studentId}</p>
+                    <p><strong>Bed:</strong> {student.bId}</p>
+                    <p><strong>Due date:</strong> {student.dueDate}</p>
                 </div>
             ))}
         </div>

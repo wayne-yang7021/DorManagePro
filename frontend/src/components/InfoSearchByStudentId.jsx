@@ -25,7 +25,7 @@ function InfoSearchByStudentId() {
             }
 
             const data = await response.json();
-            setStudentData([data]); // 包裝成陣列以便渲染
+            setStudentData(data); // 包裝成陣列以便渲染
             setError('');
         } catch (err) {
             setStudentData(null);
@@ -86,7 +86,7 @@ function InfoSearchByStudentId() {
 
     return (
         <div style={styles.container}>
-            {admin && <h2>Search Student Information in {admin.dorm_id} by Student ID </h2>}
+            {admin && <h2>Search Student Information in {admin.dormId} by Student ID </h2>}
             <form onSubmit={handleSearch} style={{ marginBottom: '20px' }}>
                 <div style={styles.formGroup}>
                     <label htmlFor="studentId" style={styles.label}>Student ID</label>
@@ -112,11 +112,11 @@ function InfoSearchByStudentId() {
             {error && <div style={styles.alert}>{error}</div>}
 
             {studentData && studentData.map(student => (
-                <div style={styles.card} key={student.student_id}>
+                <div style={styles.card} key={student.studentId}>
                     <h5>Student Details</h5>
-                    <p><strong>Student ID:</strong> {student.student_id}</p>
-                    <p><strong>Bed:</strong> {student.b_id}</p>
-                    <p><strong>Due date:</strong> {student.due_date}</p>
+                    <p><strong>Student ID:</strong> {student.studentId}</p>
+                    <p><strong>Bed:</strong> {student.bId}</p>
+                    <p><strong>Due date:</strong> {student.dueDate}</p>
                     <p><strong>Email:</strong> {student.email}</p>
                     <p><strong>Contact:</strong> {student.phone}</p>
                 </div>

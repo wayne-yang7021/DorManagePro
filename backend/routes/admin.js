@@ -102,18 +102,10 @@ router.get('/all_living_student_search', async (req, res) => {
     try {
         const db = getDb();
         const result = await db
-        .select({
-            student_id: user.studentId,
-            email: user.email,
-            phone: user.phone,
-            dorm_id: user.dormId,
-            b_id: user.bId,
-            due_date: user.dueDate,
-        })
+        .select()
         .from(user)
         .where(eq(user.dormId, dorm_id)) // 住在此宿舍中並且還沒搬出去
-        .orderBy(user.studentId)
-        .limit(200);
+        .orderBy(user.studentId);
   
         if (result.length === 0) {
             return res.status(404).json({ error: 'Student not found' });
@@ -134,22 +126,14 @@ router.get('/student_search', async (req, res) => {
     try {
         const db = getDb();
         const result = await db
-        .select({
-            student_id: user.studentId,
-            email: user.email,
-            phone: user.phone,
-            dorm_id: user.dormId,
-            b_id: user.bId,
-            due_date: user.dueDate
-        })
+        .select()
         .from(user)
         .where(and(eq(user.studentId, student_id), eq(user.dormId, dorm_id))) 
-        .limit(1);
   
         if (result.length === 0) {
             return res.status(404).json({ error: 'Student not found' });
         }
-        res.json(result[0]);
+        res.json(result);
         } catch (err) {
         res.status(500).json({ error: err.message });
         }
@@ -164,17 +148,18 @@ router.get('/student_search', async (req, res) => {
   
     try {
         const db = getDb();
-      const result = await db
-      .select({
-        student_id: user.studentId,
-        email: user.email,
-        phone: user.phone,
-        b_id: user.bId,
-        due_date: user.dueDate
-      })
-      .from(user)
-      .leftJoin(bed, eq(user.bId, bed.bId)) // LEFT JOIN 条件
-      .where(and(eq(bed.roomNumber, room_number), eq(bed.dormId, dorm_id))) 
+        const result = await db
+        .select({
+          studentId: user.studentId,
+          email: user.email,
+          phone: user.phone,
+          bId: user.bId,
+          dueDate: user.dueDate,
+          dormId: user.dormId
+        })
+        .from(user)
+        .leftJoin(bed, eq(user.bId, bed.bId)) // LEFT JOIN 条件
+        .where(and(eq(bed.roomNumber, room_number), eq(user.dormId, dorm_id),eq(bed.dormId, dorm_id)))
   
   
       if (result.length === 0) {
@@ -182,11 +167,11 @@ router.get('/student_search', async (req, res) => {
       }
   
       res.json(result);
+      console.log(result)
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   });
-
 // Snack Announcement - 發佈零食公告
 router.post('/snack_announcement', async (req, res) => {
     const { ssn, semester, dorm_id, snack_name } = req.body;
@@ -354,7 +339,7 @@ router.get('/move_record_search', async (req, res) => {
 
 // bed Transfer Request Search - 查詢內轉請求
 router.get('/bed_transfer_request_search', async (req, res) => {
-  const {applying_dorm_id} = req.query;
+  const {dorm_id} = req.query;
   try {
       const db = getDb();
       const result = await db
@@ -369,7 +354,7 @@ router.get('/bed_transfer_request_search', async (req, res) => {
       })
       .from(moveApplication)
       .leftJoin(user, eq(user.ssn, moveApplication.ssn))
-      .where(eq(moveApplication.dormId, applying_dorm_id))
+      .where(eq(moveApplication.dormId, dorm_id))
       .orderBy(moveApplication.applyTime);
 
     if (result.length === 0) {

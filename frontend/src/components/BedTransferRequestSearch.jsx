@@ -11,7 +11,7 @@ function BedTransferRequestSearch() {
         e.preventDefault();
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/bed_transfer_request_search?applying_dorm_id=${admin.dormId}`
+                `http://localhost:8888/api/admin/bed_transfer_request_search?dorm_id=${admin.dormId}`
             );
 
             if (!response.ok) {
