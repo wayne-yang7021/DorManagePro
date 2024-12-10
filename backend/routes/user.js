@@ -192,7 +192,7 @@ router.post('/bed_transfer_request', async (req, res) => {
     const db = getDb();
     const { ssn, semester, move_in_bed, original_bed, dorm_id} = req.body;
     const result = await db
-      .insert(moveRecord)
+      .insert(moveApplication)
       .values({
         ssn: ssn,
         semester: semester,

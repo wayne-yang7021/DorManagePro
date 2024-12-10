@@ -39,7 +39,7 @@ const bed = pgTable('bed', {
 const moveApplication = pgTable('move_application', {
   mid: uuid().defaultRandom().primaryKey(),
   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // 外鍵指向 USER
-  orignialBed: varchar('orignialbed', 50).notNull().references(() => bed.bId),
+  originalBed: varchar('orignialbed', 50).notNull().references(() => bed.bId),
   moveInBed: varchar('moveinbed', 50).notNull().references(() => bed.bId),
   dormId: varchar('dormid', 50).notNull().references(() => bed.dormId),
   status: varchar('status', 50).notNull(),
