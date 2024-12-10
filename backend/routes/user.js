@@ -50,7 +50,7 @@ router.post('/book', async (req, res) => {
         .select()
         .from(bookRecord)
         .where(eq(bookRecord.fid, fId))
-        // .forUpdate(); // Apply a write lock on the rows
+        .for('update', { skipLocked: true });
 
       // Insert booking information
       await tx.insert(bookRecord).values({
