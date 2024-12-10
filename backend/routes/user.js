@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { eq, and, transaction, desc } = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
-const { user,  bed, snackOption, maintenanceRecord, bookRecord, moveRecord, moveApplication, discussionBoard } = require('../models/schema'); // Schema
+const { user,  bed, snackOption, maintenanceRecord, bookRecord, moveRecord, moveApplication, discussionBoard, facility } = require('../models/schema'); // Schema
 
 router.post('/maintenance', async (req, res) => {
   const { ssn, description } = req.body;
@@ -146,8 +146,15 @@ router.get('/facilities_reservations', async (req, res) => {
     const db = getDb();
     const { ssn } = req.query;
     const result = await db
-    .select()
+    .select({
+      ssn: bookRecord.ssn,
+      fName: facility.fName,
+      fid: bookRecord.fid,
+      bookTime: bookRecord.bookTime,
+      isCancelled: bookRecord.isCancelled
+    })
     .from(bookRecord)
+    .leftJoin(facility, eq(bookRecord.fid, facility.fid)) 
     .where(eq(bookRecord.ssn, ssn));
 
     if (result.length === 0) {
@@ -254,6 +261,24 @@ router.get('/get_post_list', async(req, res) =>{
   }
 });
 
+router.get('/view_transfer_application_status', async (req, res) => {
+  try {
+    const db = getDb();
+    const { ssn } = req.query;
+    const result = await db
+    .select()
+    .from(moveApplication)
+    .where(eq(moveApplication.ssn, ssn));
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+    res.json(result);
+  } catch (err) {
+    console.log(err.message)
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;
 

@@ -112,16 +112,6 @@ const Navbar = () => {
             Apply for transfer
           </a>
         </li>
-        <li>
-          <a
-            href="/facility_reservation"
-            style={styles.link}
-            onMouseEnter={(e) => (e.target.style.color = styles.link.color)}
-            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
-          >
-            View facility reservation
-          </a>
-        </li>
 
         <li>
           <a

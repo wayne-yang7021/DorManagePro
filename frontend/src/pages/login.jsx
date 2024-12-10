@@ -29,7 +29,6 @@ const LoginPage = () => {
       {/* Login Card */}
       <div style={styles.card}>
         <p style={styles.title}>Student Login</p>
-        {/* <p style={styles.subtitle}>Stay updated on your dormitory details</p> */}
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} style={styles.form}>
@@ -89,7 +88,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     height: "100vh",
-    background: "linear-gradient(135deg, #f9f9f9, #e3e3e3)",
+    background: "linear-gradient(135deg, #1e3c72, #2a5298)",
     fontFamily: '"Poppins", sans-serif',
     position: "relative",
   },
@@ -101,28 +100,26 @@ const styles = {
   brand: {
     fontSize: "28px",
     fontWeight: "700",
-    color: "#0a66c2",
+    color: "#00d4ff",
     margin: "0",
+    textShadow: "0 0 10px #00d4ff, 0 0 20px #00d4ff",
   },
   card: {
-    backgroundColor: "#fff",
-    borderRadius: "10px",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: "20px",
     padding: "40px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
     maxWidth: "400px",
     width: "100%",
     textAlign: "center",
+    backdropFilter: "blur(10px)",
   },
   title: {
     fontSize: "23px",
     fontWeight: "1000",
-    color: "#333",
+    color: "#fff",
     marginBottom: "20px",
-  },
-  subtitle: {
-    fontSize: "14px",
-    color: "#555",
-    marginBottom: "20px",
+    textShadow: "0 0 10px #fff",
   },
   form: {
     display: "flex",
@@ -135,39 +132,46 @@ const styles = {
   label: {
     fontSize: "14px",
     fontWeight: "600",
-    color: "#333",
+    color: "#ddd",
     marginBottom: "8px",
     display: "block",
   },
   input: {
-    padding: "12px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    fontSize: "14px",
-    width: "100%",
-    boxSizing: "border-box",
+    padding: '12px',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '14px',
+    width: '100%',
+    boxSizing: 'border-box',
+    background: 'rgba(255, 255, 255, 0.3)',
+    color: '#fff',
+    outline: 'none',
+    boxShadow: 'inset 0 0 5px rgba(0, 0, 0, 0.5)',
   },
   button: {
     padding: "12px",
     marginTop: "15px",
     borderRadius: "8px",
     border: "none",
-    background: "#0a66c2",
+    background: "linear-gradient(90deg, #00d4ff, #0099ff)",
     color: "#fff",
     fontSize: "16px",
     fontWeight: "bold",
     cursor: "pointer",
     marginBottom: "10px",
+    textShadow: "0 0 10px #fff",
+    transition: "transform 0.3s",
   },
   adminLink: {
     marginTop: "20px",
     fontSize: "14px",
-    color: "#333",
+    color: "#ddd",
   },
   adminLoginLink: {
-    color: "#0a66c2",
+    color: "#00d4ff",
     textDecoration: "none",
     fontWeight: "600",
+    textShadow: "0 0 10px #00d4ff",
   },
 };
 
