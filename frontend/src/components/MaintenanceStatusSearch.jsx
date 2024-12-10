@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { useAuth } from "../context/authContext";
 
 function MaintenanceStatus() {
-    const {admin} = useAuth()
+    const { admin } = useAuth();
     const [searchDorm, setSearchDorm] = useState('');
     const [maintenanceData, setMaintenanceData] = useState([]);
     const [error, setError] = useState('');
     const [completionDate, setCompletionDate] = useState('');
-    const [showTable, setShowTable] = useState(true); // 控制表格顯示
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -45,14 +44,13 @@ function MaintenanceStatus() {
                     completedDate: completionDate,
                 }),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Failed to mark as completed');
             }
-    
+
             const result = await response.json();
-    
-            // 成功後更新前端狀態
+
             setMaintenanceData((prevData) =>
                 prevData.map((item) =>
                     item.ssn === record.ssn
@@ -60,15 +58,13 @@ function MaintenanceStatus() {
                         : item
                 )
             );
-    
+
             setCompletionDate('');
             setError('');
         } catch (error) {
             setError(error.message);
         }
     };
-    
-    
 
     return (
         <div style={styles.container}>
@@ -81,54 +77,50 @@ function MaintenanceStatus() {
 
             {error && <p style={styles.noData}>{error}</p>}
 
-            {/* 切換表格顯示狀態的按鈕 */}
-            <button
-                onClick={() => setShowTable((prev) => !prev)}
-                style={styles.tableButton}
-            >
-                {showTable ? 'Hide Table' : 'Show Table'}
-            </button>
-
-            {showTable && maintenanceData.length > 0 && (
-                <table style={styles.table}>
-                    <thead>
-                        <tr>
-                            <th style={styles.th}>Dorm</th>
-                            <th style={styles.th}>Maintenance Info</th>
-                            <th style={styles.th}>Completed</th>
-                            <th style={styles.th}>Completion Date</th>
-                            <th style={styles.th}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {maintenanceData.map((record, index) => (
-                        <tr key={index}>
-                            <td style={styles.td}>{record.dorm_id}</td>
-                            <td style={styles.td}>{record.description}</td>
-                            <td style={styles.td}>{record.isCompleted ? 'Yes' : 'No'}</td>
-                            <td style={styles.td}>{record.completedDate || 'N/A'}</td>
-                            <td style={styles.td}>
-                                {!record.isCompleted && (
-                                    <div>
-                                        <input
-                                            type="date"
-                                            style={styles.input}
-                                            value={completionDate}
-                                            onChange={(e) => setCompletionDate(e.target.value)}
-                                        />
-                                        <button
-                                            style={styles.button}
-                                            onClick={() => handleUpdate(record)} // 使用索引代替 ID
-                                        >
-                                            Mark as Completed
-                                        </button>
-                                    </div>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+            {maintenanceData.length > 0 && (
+                <div style={styles.tableContainer}>
+                    <div style={styles.tableWrapper}>
+                        <table style={styles.table}>
+                            <thead>
+                                <tr>
+                                    <th style={styles.th}>Dorm</th>
+                                    <th style={styles.th}>Maintenance Info</th>
+                                    <th style={styles.th}>Completed</th>
+                                    <th style={styles.th}>Completion Date</th>
+                                    <th style={styles.th}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {maintenanceData.map((record, index) => (
+                                    <tr key={index}>
+                                        <td style={styles.td}>{record.dorm_id}</td>
+                                        <td style={styles.td}>{record.description}</td>
+                                        <td style={styles.td}>{record.isCompleted ? 'Yes' : 'No'}</td>
+                                        <td style={styles.td}>{record.completedDate || 'N/A'}</td>
+                                        <td style={styles.td}>
+                                            {!record.isCompleted && (
+                                                <div>
+                                                    <input
+                                                        type="date"
+                                                        style={styles.input}
+                                                        value={completionDate}
+                                                        onChange={(e) => setCompletionDate(e.target.value)}
+                                                    />
+                                                    <button
+                                                        style={styles.button}
+                                                        onClick={() => handleUpdate(record)}
+                                                    >
+                                                        Mark as Completed
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             )}
         </div>
     );
@@ -139,14 +131,20 @@ export default MaintenanceStatus;
 const styles = {
     container: {
         padding: '20px',
-        maxWidth: '800px',
+        maxWidth: '1000px',
         margin: '20px auto',
         border: '1px solid #ddd',
         borderRadius: '8px',
         backgroundColor: '#f9f9f9',
     },
-    formGroup: {
-        marginBottom: '20px',
+    tableContainer: {
+        marginTop: '20px',
+        maxHeight: '400px', // 限制高度
+        overflowY: 'auto', // 啟用垂直滾動
+        border: '1px solid #ddd', // 增加邊框方便區分滾動區域
+    },
+    tableWrapper: {
+        width: '100%', // 表格寬度撐滿容器
     },
     input: {
         width: '80%',
@@ -167,7 +165,6 @@ const styles = {
     table: {
         width: '100%',
         borderCollapse: 'collapse',
-        marginTop: '20px',
     },
     th: {
         border: '1px solid #ddd',
@@ -182,19 +179,5 @@ const styles = {
     noData: {
         marginTop: '20px',
         color: '#555',
-    },
-    tableButton: {
-        padding: '8px 12px',
-        backgroundColor: '#28a745', // 綠色
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        fontSize: '14px',
-        margin: '10px 0',
-        transition: 'background-color 0.3s ease',
-    },
-    tableButtonHover: {
-        backgroundColor: '#218838', // 更深的綠色
     },
 };

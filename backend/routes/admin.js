@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { eq, and, isNull, isNotNull, ne} = require('drizzle-orm')
+const { eq, and, isNull, isNotNull, ne,desc} = require('drizzle-orm')
 const { getDb, db } = require('../models/index')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -248,7 +248,8 @@ router.get('/maintenance_status', async (req, res) => {
         })
         .from(maintenanceRecord)
         .leftJoin(user, eq(maintenanceRecord.ssn, user.ssn))
-        .where(eq(user.dormId, dorm_id));
+        .where(eq(user.dormId, dorm_id))
+        .orderBy(desc(maintenanceRecord.fixedDate));
 
       if (result.length === 0) {
         return res.status(404).json({ error: 'Dorm change request not found' });

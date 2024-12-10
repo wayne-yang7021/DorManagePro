@@ -2,25 +2,23 @@ import React, { useState } from 'react';
 import { useAuth } from "../context/authContext";
 
 function InfoSearchAllLivingStudent() {
-    const {admin} = useAuth()
+    const { admin } = useAuth();
     const [studentData, setStudentData] = useState(null);
     const [error, setError] = useState('');
-    const [showTable, setShowTable] = useState(true); // 控制表格顯示
 
     const handleSearch = async (e) => {
         e.preventDefault();
-
         try {
             const response = await fetch(
                 `http://localhost:8888/api/admin/all_living_student_search?dorm_id=${admin.dormId}`
             );
-            
+
             if (!response.ok) {
                 throw new Error('Student not found');
             }
 
             const data = await response.json();
-            setStudentData(data); // 包裝成陣列以便渲染
+            setStudentData(data);
             setError('');
         } catch (err) {
             setStudentData(null);
@@ -31,33 +29,27 @@ function InfoSearchAllLivingStudent() {
     const styles = {
         container: {
             padding: '20px',
-            maxWidth: '800px',
+            maxWidth: '900px',
             margin: '20px auto',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            backgroundColor: '#f9f9f9',
+            borderRadius: '10px',
+            backgroundColor: '#f5f7fa',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         },
-        formGroup: {
-            marginBottom: '15px',
-        },
-        label: {
-            fontWeight: 'bold',
-        },
-        input: {
-            width: '100%',
-            padding: '8px',
-            marginTop: '5px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
+        header: {
+            textAlign: 'center',
+            marginBottom: '20px',
+            color: '#333',
         },
         button: {
             marginTop: '10px',
+            marginBottom: '10px',
             padding: '10px 15px',
             backgroundColor: '#007bff',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '5px',
             cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
         },
         buttonHover: {
             backgroundColor: '#0056b3',
@@ -67,36 +59,44 @@ function InfoSearchAllLivingStudent() {
             backgroundColor: '#f8d7da',
             padding: '10px',
             border: '1px solid #f5c6cb',
-            borderRadius: '4px',
+            borderRadius: '5px',
             marginTop: '10px',
+            textAlign: 'center',
         },
-        card: {
-            marginTop: '15px',
-            padding: '15px',
+        scrollContainer: {
+            maxHeight: '400px',
+            overflowY: 'auto',
             border: '1px solid #ddd',
             borderRadius: '8px',
+            padding: '15px',
             backgroundColor: '#ffffff',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
         },
-        tableButton: {
-            padding: '8px 12px',
-            backgroundColor: '#28a745', // 綠色
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
+        card: {
+            marginBottom: '15px',
+            padding: '15px',
+            borderRadius: '8px',
+            backgroundColor: '#f9f9f9',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        },
+        cardHeader: {
+            fontSize: '16px',
+            fontWeight: 'bold',
+            marginBottom: '10px',
+            color: '#555',
+        },
+        cardText: {
+            margin: '5px 0',
             fontSize: '14px',
-            margin: '10px 0',
-            transition: 'background-color 0.3s ease',
-        },
-        tableButtonHover: {
-            backgroundColor: '#218838', // 更深的綠色
+            color: '#666',
         },
     };
 
     return (
         <div style={styles.container}>
-            {admin && <h2>Search All Living Student Information in {admin.dormId} </h2>}
-            <form onSubmit={handleSearch} style={{ marginBottom: '20px' }}>
+            {admin && <h2 style={styles.header}>All Students in Dorm {admin.dormId}</h2>}
+            {studentData && <h3 style={styles.header}>Total {studentData.length} Students in this Dorm </h3>}
+            <form onSubmit={handleSearch} style={{ textAlign: 'center' }}>
                 <button
                     type="submit"
                     style={styles.button}
@@ -109,22 +109,18 @@ function InfoSearchAllLivingStudent() {
 
             {error && <div style={styles.alert}>{error}</div>}
 
-            {/* 切換表格顯示狀態的按鈕 */}
-            <button
-                onClick={() => setShowTable((prev) => !prev)}
-                style={styles.tableButton}
-            >
-                {showTable ? 'Hide Table' : 'Show Table'}
-            </button>
-
-            {showTable && studentData && studentData.map(student => (
-                <div style={styles.card} key={student.studentId}>
-                    <h5>Student Details</h5>
-                    <p><strong>Student ID:</strong> {student.studentId}</p>
-                    <p><strong>Bed:</strong> {student.bId}</p>
-                    <p><strong>Due date:</strong> {student.dueDate}</p>
+            {studentData && (
+                <div style={styles.scrollContainer}>
+                    {studentData.map((student) => (
+                        <div style={styles.card} key={student.studentId}>
+                            <div style={styles.cardHeader}>Student Details</div>
+                            <p style={styles.cardText}><strong>Student ID:</strong> {student.studentId}</p>
+                            <p style={styles.cardText}><strong>Bed:</strong> {student.bId}</p>
+                            <p style={styles.cardText}><strong>Due Date:</strong> {student.dueDate}</p>
+                        </div>
+                    ))}
                 </div>
-            ))}
+            )}
         </div>
     );
 }

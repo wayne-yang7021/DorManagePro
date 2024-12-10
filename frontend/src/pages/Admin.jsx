@@ -64,7 +64,7 @@ function Admin() {
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', padding: '20px' }}>
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', backgroundColor: '#f8f9fa', padding: '10px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
                     <button onClick={() => setActiveTab('allLiving')} 
-                        style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'allLiving' ? '#007bff' : '#e9ecef', color: activeTab === 'allLiving' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Search All Living Student</button>
+                        style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'allLiving' ? '#007bff' : '#e9ecef', color: activeTab === 'allLiving' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Search All Student</button>
                     <button onClick={() => setActiveTab('studentId')} 
                         style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'studentId' ? '#007bff' : '#e9ecef', color: activeTab === 'studentId' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Search by Student ID</button>
                     <button onClick={() => setActiveTab('roomNumber')} 

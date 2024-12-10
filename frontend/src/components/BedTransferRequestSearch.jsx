@@ -5,7 +5,6 @@ function BedTransferRequestSearch() {
     const { admin } = useAuth();
     const [moveApplicationData, setMoveApplicationData] = useState([]);
     const [error, setError] = useState('');
-    const [showTable, setShowTable] = useState(true); // 控制表格顯示
     // console.log(admin)
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -69,15 +68,8 @@ function BedTransferRequestSearch() {
 
             {error && <p style={styles.noData}>{error}</p>}
 
-            {/* 切換表格顯示狀態的按鈕 */}
-            <button
-                onClick={() => setShowTable((prev) => !prev)}
-                style={styles.tableButton}
-            >
-                {showTable ? 'Hide Table' : 'Show Table'}
-            </button>
 
-            {showTable && moveApplicationData.length > 0 && (
+            {moveApplicationData.length > 0 && (
                 <table style={styles.table}>
                     <thead>
                         <tr>
