@@ -53,7 +53,7 @@ app.post('/api/login', async (req, res) => {
 
       // Assuming the SSN is encrypted in the database, decrypt it here (use a suitable decryption method)
       // const isSSNValid = await bcrypt.compare(ssn, foundUser[0].ssn); // Assuming SSN is hashed/encrypted using bcrypt
-      const isSSNValid = (ssn === foundUser[0].ssn)
+      const isSSNValid = ssn === foundUser[0].ssn; // Assuming SSN is hashed/encrypted using bcrypt
       if (!isSSNValid) {
           return res.status(401).json({ message: 'Invalid SSN' });
       }
@@ -89,7 +89,6 @@ app.get('/api/user', async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, secretKey);
-    
     // Fetch user from database using decoded token
     const foundUser = await db.select()
       .from(user)

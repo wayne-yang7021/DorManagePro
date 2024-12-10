@@ -70,7 +70,6 @@ const MyProvider = ({ children }) => {
     
         if (!response.ok) {
           const errorData = await response.json();
-          console.error('Error Response Data:', errorData);
           throw new Error(errorData.error || 'Failed to fetch applications');
         }
     

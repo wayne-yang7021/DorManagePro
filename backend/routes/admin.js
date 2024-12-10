@@ -24,7 +24,8 @@ router.post('/login', async (req, res) => {
       }
   
       // Assuming the password is hashed in the database
-      const isPasswordValid = await bcrypt.compare(password, foundAdmin[0].ssn);
+      // const isPasswordValid = await bcrypt.compare(password, foundAdmin[0].ssn);
+      const isPasswordValid = password === foundAdmin[0].ssn
       if (!isPasswordValid) {
         return res.status(401).json({ message: 'Invalid password' });
       }
@@ -340,11 +341,16 @@ router.get('/bed_transfer_request_search', async (req, res) => {
   try {
       const db = getDb();
       const result = await db
-      .select()
+      .select({
+        originalBed: moveApplication.originalBed,
+        moveInBed: moveApplication.moveInBed,
+        status : moveApplication.status,
+        studentId: user.studentId,
+      })
       .from(moveApplication)
       .leftJoin(user, eq(user.ssn, moveApplication.ssn))
       .where(eq(moveApplication.dormId, applying_dorm_id))
-      .order(moveApplication.applyTime);
+      .orderBy(moveApplication.applyTime);
 
     if (result.length === 0) {
       return res.status(404).json({ error: 'Dorm transfer request not found' });

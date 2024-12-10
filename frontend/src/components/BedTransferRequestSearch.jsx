@@ -53,7 +53,7 @@ function BedTransferRequestSearch() {
 
     return (
         <div style={styles.container}>
-            {admin && <h2>Dorm Transfer Requests in {admin.dormId}</h2>}
+            {admin && <h2>Bed Transfer Requests in {admin.dormId}</h2>}
             <form onSubmit={handleSearch}>
                 <button type="submit" style={styles.button}>
                     Search
