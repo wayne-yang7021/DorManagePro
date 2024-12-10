@@ -29,14 +29,21 @@ function BedTransferRequestSearch() {
         }
     };
 
-    const handleUpdateStatus = async (mId) => {
+    const handleUpdateStatus = async (application) => {
+        const moveInBed = application.moveInBed
         try {
-            const response = await fetch(`http://localhost:8888/api/admin/update_bed_transfer_status`, {
+            const response = await fetch(`http://localhost:8888/api/admin/bed_transfer_update`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ mId, status: 'approved' }),
+                body: JSON.stringify({
+                    m_id: application.mid,
+                    original_bed: application.originalBed,
+                    move_in_bed: application.moveInBed,
+                    ssn: application.ssn,
+                    dorm_id: application.dormId
+                }),
             });
 
             if (!response.ok) {
@@ -44,7 +51,7 @@ function BedTransferRequestSearch() {
             }
 
             // 更新成功後，移除該筆資料，讓表格即時更新
-            setMoveApplicationData(prevData => prevData.filter(application => application.mId !== mId));
+            setMoveApplicationData(prevData => prevData.filter(application => application.moveInBed !== moveInBed));
             alert('Status updated successfully');
         } catch (err) {
             alert(err.message || 'An error occurred while updating status');
@@ -91,7 +98,7 @@ function BedTransferRequestSearch() {
                                 <td style={styles.td}>
                                     <button
                                         style={styles.updateButton}
-                                        onClick={() => handleUpdateStatus(application.mId)}
+                                        onClick={() => handleUpdateStatus(application)}
                                     >
                                         Update Status
                                     </button>

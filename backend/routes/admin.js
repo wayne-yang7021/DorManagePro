@@ -346,6 +346,9 @@ router.get('/bed_transfer_request_search', async (req, res) => {
         moveInBed: moveApplication.moveInBed,
         status : moveApplication.status,
         studentId: user.studentId,
+        ssn: moveApplication.ssn,
+        mid: moveApplication.mid,
+        dormId: moveApplication.dormId
       })
       .from(moveApplication)
       .leftJoin(user, eq(user.ssn, moveApplication.ssn))
@@ -364,8 +367,8 @@ router.get('/bed_transfer_request_search', async (req, res) => {
 
 // Bed Transfer Request - 宿舍內轉更新
 router.put('/bed_transfer_update', async (req, res) => {
-  const { m_id, move_in_bed } = req.body;
-
+  const { m_id, original_bed, move_in_bed, ssn, dorm_id} = req.body;
+  // console.log(original_bed)
   try {
     const db = getDb();
 
@@ -380,9 +383,26 @@ router.put('/bed_transfer_update', async (req, res) => {
       const updateUser = await trx
         .update(user)
         .set({ bId: move_in_bed })
-        .where(eq(user.mId, m_id));
+        .where(eq(user.ssn, ssn));
 
       if (!updateUser) {
+        throw new Error('Failed to update user bed assignment');
+      }
+      const updateMoveInBed = await trx
+        .update(bed)
+        .set({ ssn: ssn})
+        .where(and(eq(bed.bId, move_in_bed), eq(bed.dormId, dorm_id)));
+
+      if (!updateMoveInBed) {
+        throw new Error('Failed to update user bed assignment');
+      }
+
+      const updateOriginalBed = await trx
+        .update(bed)
+        .set({ ssn: null})
+        .where(and(eq(bed.bId, original_bed), eq(bed.dormId, dorm_id)));
+
+      if (!updateOriginalBed) {
         throw new Error('Failed to update user bed assignment');
       }
 
@@ -390,7 +410,7 @@ router.put('/bed_transfer_update', async (req, res) => {
       const approveApplication = await trx
         .update(moveApplication)
         .set({ status: 'approved' })
-        .where(eq(moveApplication.mId, m_id));
+        .where(eq(moveApplication.mid, m_id));
 
       if (!approveApplication) {
         throw new Error('Failed to update move application to approved');
@@ -400,7 +420,7 @@ router.put('/bed_transfer_update', async (req, res) => {
       const denyOtherApplications = await trx
         .update(moveApplication)
         .set({ status: 'denied' })
-        .where(ne(moveApplication.mId, m_id));
+        .where(ne(moveApplication.mid, m_id));
 
       if (!denyOtherApplications) {
         throw new Error('Failed to update other move applications to denied');

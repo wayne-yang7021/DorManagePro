@@ -88,7 +88,8 @@ router.get('/get_empty_bed_in_room', async (req, res) => {
     const result = await db
       .select()
       .from(bed)
-      .where(and(eq(bed.dormId, dorm_id), isNull(bed.ssn)));
+      .where(and(eq(bed.dormId, dorm_id), isNull(bed.ssn)))
+      .orderBy(bed.bId)
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
