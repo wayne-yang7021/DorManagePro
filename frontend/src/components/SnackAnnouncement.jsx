@@ -44,7 +44,7 @@ function SnackAnnouncement() {
                     body: JSON.stringify({
                         ssn: admin.ssn,
                         semester: semester,
-                        dorm_id: admin.dorm_id,
+                        dorm_id: admin.dormId,
                         snack_name: snackToAdd,
                     }),
                 });

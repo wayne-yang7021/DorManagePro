@@ -13,7 +13,7 @@ function MaintenanceStatus() {
         e.preventDefault();
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/maintenance_status?dorm_id=${admin.dorm_id}`
+                `http://localhost:8888/api/admin/maintenance_status?dorm_id=${admin.dormId}`
             );
             if (!response.ok) {
                 throw new Error('Request not found');

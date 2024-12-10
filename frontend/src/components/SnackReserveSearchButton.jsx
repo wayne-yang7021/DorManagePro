@@ -27,22 +27,17 @@ const SnackReserveSearchButton = ({ semester, admin, setFilteredReservations, se
         }
 
         setError(''); // 清除錯誤訊息
-
+        console.log("test", semester, admin.dormId)
         try {
             // console.log("semester_trim", semester.replace(/\(.*?\)/g, '').trim());
-            const response = await fetch(`http://localhost:8888/api/admin/snack_announcement_search?semester=${semester}`, {
-                method: 'POST',
+            const response = await fetch(`http://localhost:8888/api/admin/snack_announcement_search?semester=${semester}&dorm_id=${admin.dormId}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    semester: semester,
-                    dorm_id: admin.dorm_id,
-                }),
+                }
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("data", data);
                 setFilteredReservations(data);
                 setShowResults(true); // 顯示結果
             } else {

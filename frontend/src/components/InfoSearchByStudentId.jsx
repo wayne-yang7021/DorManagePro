@@ -17,7 +17,7 @@ function InfoSearchByStudentId() {
 
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/student_search?student_id=${studentId}&dorm_id=${admin.dorm_id}`
+                `http://localhost:8888/api/admin/student_search?student_id=${studentId}&dorm_id=${admin.dormId}`
             );
             
             if (!response.ok) {
