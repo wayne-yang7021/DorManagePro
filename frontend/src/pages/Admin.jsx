@@ -9,6 +9,7 @@ import MaintenanceStatus from '../components/MaintenanceStatusSearch';
 import InfoSearchAllLivingStudent from '../components/InfoSearchAllLivingStudent';
 import { useAuth } from "../context/authContext";
 import { useNavigate } from 'react-router-dom';
+import ManageDiscussion from '../components/ManageDiscussion';
 
 function Admin() {
     const { admin, loading } = useAuth();
@@ -50,6 +51,8 @@ function Admin() {
                 return <SnackReservationStatus />;
             case 'maintenanceStatus':
                 return <MaintenanceStatus />;
+            case 'manageDiscussion':
+                return <ManageDiscussion />;
             default:
                 return null;
         }
@@ -74,6 +77,8 @@ function Admin() {
                         style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'maintenanceStatus' ? '#007bff' : '#e9ecef', color: activeTab === 'maintenanceStatus' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Maintenance Status</button>
                     <button onClick={() => setActiveTab('bedTransfer')} 
                         style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'bedTransfer' ? '#007bff' : '#e9ecef', color: activeTab === 'bedTransfer' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Bed Transfer Requests</button>
+                    <button onClick={() => setActiveTab('manageDiscussion')} 
+                        style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'manageDiscussion' ? '#007bff' : '#e9ecef', color: activeTab === 'manageDiscussion' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Manage Discussion Board</button>    
                 </nav>
                 <div style={{ width: '100%', padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px' }}>
                     {renderContent()}
