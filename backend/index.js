@@ -108,7 +108,7 @@ app.get('/api/user', async (req, res) => {
       email: foundUser[0].email,
       phone: foundUser[0].phone,
       bId: foundUser[0].bId,
-
+      dueDate: foundUser[0].dueDate
     });
   } catch (error) {
     res.status(401).json({ message: 'Invalid or expired token' });

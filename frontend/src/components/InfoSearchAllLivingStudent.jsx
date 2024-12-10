@@ -12,7 +12,7 @@ function InfoSearchAllLivingStudent() {
 
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/all_living_student_search?dorm_id=${admin.dorm_id}`
+                `http://localhost:8888/api/admin/all_living_student_search?dorm_id=${admin.dormId}`
             );
             
             if (!response.ok) {
@@ -95,7 +95,7 @@ function InfoSearchAllLivingStudent() {
 
     return (
         <div style={styles.container}>
-            {admin && <h2>Search All Living Student Information in {admin.dorm_id} </h2>}
+            {admin && <h2>Search All Living Student Information in {admin.dormId} </h2>}
             <form onSubmit={handleSearch} style={{ marginBottom: '20px' }}>
                 <button
                     type="submit"
@@ -122,10 +122,7 @@ function InfoSearchAllLivingStudent() {
                     <h5>Student Details</h5>
                     <p><strong>Student ID:</strong> {student.student_id}</p>
                     <p><strong>Bed:</strong> {student.b_id}</p>
-                    <p><strong>Move in date:</strong> {student.move_in_date}</p>
                     <p><strong>Due date:</strong> {student.due_date}</p>
-                    <p><strong>Email:</strong> {student.email}</p>
-                    <p><strong>Contact:</strong> {student.phone}</p>
                 </div>
             ))}
         </div>

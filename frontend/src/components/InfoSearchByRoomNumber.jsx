@@ -18,7 +18,7 @@ function InfoSearchByRoomNumber() {
 
         try {
             const response = await fetch(
-                `http://localhost:8888/api/admin/room_search?room_number=${roomNumber}&dorm_id=${admin.dorm_id}`
+                `http://localhost:8888/api/admin/room_search?room_number=${roomNumber}&dorm_id=${admin.dormId}`
             );
 
             if (!response.ok) {
