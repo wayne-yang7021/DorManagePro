@@ -5,7 +5,7 @@ const { getDb, db } = require('../models/index')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
-const { user,  bed , snackOption, semester, snackRecord, moveApplication, admin, maintenanceRecord, moveRecord} = require('../models/schema'); // Schema
+const { user,  bed , snackOption, semester, snackRecord, moveApplication, admin, maintenanceRecord, moveRecord, discussionBoard} = require('../models/schema'); // Schema
 
 router.post('/login', async (req, res) => {
     const db = getDb();
@@ -310,6 +310,26 @@ router.put('/update_maintenance', async (req, res) => {
         return res.status(500).json({ error: err.message });
     }
 });
+
+router.put('/delete_post', async(req, res) => {
+  const { mesid } = req.body;
+  // console.log("mesid: ", mesid);
+  try {
+    const db = getDb();
+    const deleteResult = await db
+    .delete(discussionBoard)
+    .where(eq(discussionBoard.mesid , mesid))
+
+    if(!deleteResult){
+      return res.status(400).json({ error: 'Failed to delete the post' });
+    }
+    
+    return res.status(200).json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error('Error while deleting the post:', err);
+    return res.status(500).json({ error: err.message });
+  }
+})
 
 // search move record  - 搜尋內轉紀錄
 router.get('/move_record_search', async (req, res) => {

@@ -72,7 +72,7 @@ function MaintenanceStatus() {
 
     return (
         <div style={styles.container}>
-            {admin && <h2>Maintenance Status in {admin.dorm_id}</h2>}
+            {admin && <h2>Maintenance Status in {admin.dormId}</h2>}
             <form onSubmit={handleSearch}>
                 <button type="submit" style={styles.button}>
                     Search
