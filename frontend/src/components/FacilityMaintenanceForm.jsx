@@ -15,7 +15,6 @@ const FacilityMaintenanceForm = () => {
       margin: '0 auto',
       padding: '20px',
       backgroundColor: '#f9f9f9',
-      borderRadius: '8px',
       boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
     },
     heading: {
@@ -44,10 +43,8 @@ const FacilityMaintenanceForm = () => {
     },
     submitButton: {
       padding: '10px 20px',
-      backgroundColor: '#4CAF50',
+      backgroundColor: 'gray',
       color: 'white',
-      border: 'none',
-      borderRadius: '4px',
       cursor: 'pointer',
       fontSize: '16px',
       opacity: loading ? 0.5 : 1

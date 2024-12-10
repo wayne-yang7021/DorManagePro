@@ -85,16 +85,12 @@ const styles = {
     },
     input: {
         padding: '10px',
-        borderRadius: '4px',
-        border: '1px solid #ccc',
         width: '100%',
         boxSizing: 'border-box',
     },
     button: {
         padding: '10px',
-        borderRadius: '4px',
-        border: 'none',
-        backgroundColor: '#007bff',
+        backgroundColor: 'gray',
         color: '#fff',
         cursor: 'pointer',
         fontSize: '16px',
@@ -111,7 +107,7 @@ const styles = {
         color: '#555',
     },
     registerLink: {
-        color: '#007bff',
+        color: 'gray',
         textDecoration: 'none',
         fontWeight: 'bold',
     },

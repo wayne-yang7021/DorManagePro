@@ -18,19 +18,14 @@ function Home() {
         }
     }, [user, loading, navigate]);
 
-    // When user data is loading, show a loading state
     if (loading) {
         return (
-            <div>
-                <Navbar />
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <p>Loading...</p>
-                </div>
+            <div style={{ textAlign: 'center', padding: '50px' }}>
+                <h2>Loading...</h2>
             </div>
         );
     }
 
-    // Tab content rendering based on activeTab
     const renderContent = () => {
         switch (activeTab) {
             case 'facilityReservation':
@@ -45,20 +40,86 @@ function Home() {
     };
 
     return (
-        <div style={{ backgroundColor: '#282828', color: '#fff', minHeight: '100vh', padding: '20px' }}>
+        <div style={{ fontFamily: 'Tahoma, sans-serif', backgroundColor: '#E4E4E4', padding: '20px' }}>
             <Navbar />
-            <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px', backgroundColor: '#333', border: '5px solid #fff', boxShadow: '5px 5px 15px rgba(255, 255, 255, 0.3)', borderRadius: '10px' }}>
-                <h1 style={{ fontSize: '2.5em', fontFamily: 'Impact, sans-serif', textAlign: 'center', color: '#ffcc00', textShadow: '2px 2px 5px rgba(0, 0, 0, 0.7)' }}>Facility Management</h1>
-                <div style={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
-                    <nav style={{ flex: '1', display: 'flex', flexDirection: 'column', gap: '10px', backgroundColor: '#444', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                        <button onClick={() => setActiveTab('facilityReservation')} style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'facilityReservation' ? '#007bff' : '#e9ecef', color: activeTab === 'facilityReservation' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Reserve Facility</button>
-                        <button onClick={() => setActiveTab('snackRegistration')} style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'snackRegistration' ? '#007bff' : '#e9ecef', color: activeTab === 'snackRegistration' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Snack Registration</button>
-                        <button onClick={() => setActiveTab('facilityMaintenance')} style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'facilityMaintenance' ? '#007bff' : '#e9ecef', color: activeTab === 'facilityMaintenance' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Facility Maintenance</button>
-                    </nav>
-                    <div style={{ flex: '3', padding: '20px', backgroundColor: '#555', borderRadius: '8px', boxShadow: '3px 3px 10px rgba(0, 0, 0, 0.5)' }}>
-                        {renderContent()}
-                    </div>
-                </div>
+
+            <h1 style={{ textAlign: 'center', marginTop: '20px', color: '#003366' }}>
+                Facility Management
+            </h1>
+
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <button
+                    onClick={() => setActiveTab('facilityReservation')}
+                    style={{
+                        padding: '10px 20px',
+                        margin: '0 5px',
+                        background: activeTab === 'facilityReservation'
+                            ? 'linear-gradient(to bottom, #D4D0C8, #A6A6A6)'
+                            : 'linear-gradient(to bottom, #F3F3F3, #D4D0C8)',
+                        border: '2px solid #808080',
+                        borderRadius: '4px',
+                        boxShadow: 'inset 2px 2px 1px #FFFFFF, inset -1px -1px 1px #808080',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        color: '#000',
+                        textAlign: 'center',
+                    }}
+                >
+                    Reserve Facility
+                </button>
+
+                <button
+                    onClick={() => setActiveTab('snackRegistration')}
+                    style={{
+                        padding: '10px 20px',
+                        margin: '0 5px',
+                        background: activeTab === 'snackRegistration'
+                            ? 'linear-gradient(to bottom, #D4D0C8, #A6A6A6)'
+                            : 'linear-gradient(to bottom, #F3F3F3, #D4D0C8)',
+                        border: '2px solid #808080',
+                        borderRadius: '4px',
+                        boxShadow: 'inset 2px 2px 1px #FFFFFF, inset -1px -1px 1px #808080',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        color: '#000',
+                        textAlign: 'center',
+                    }}
+                >
+                    Snack Registration
+                </button>
+
+                <button
+                    onClick={() => setActiveTab('facilityMaintenance')}
+                    style={{
+                        padding: '10px 20px',
+                        margin: '0 5px',
+                        background: activeTab === 'facilityMaintenance'
+                            ? 'linear-gradient(to bottom, #D4D0C8, #A6A6A6)'
+                            : 'linear-gradient(to bottom, #F3F3F3, #D4D0C8)',
+                        border: '2px solid #808080',
+                        borderRadius: '4px',
+                        boxShadow: 'inset 2px 2px 1px #FFFFFF, inset -1px -1px 1px #808080',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        color: '#000',
+                        textAlign: 'center',
+                    }}
+                >
+                    Facility Maintenance
+                </button>
+            </div>
+
+            <div
+                style={{
+                    marginTop: '30px',
+                    padding: '15px',
+                    background: 'linear-gradient(to bottom, #FFFFFF, #E4E4E4)',
+                    border: '2px solid #808080',
+                    boxShadow: '2px 2px 5px #808080',
+                    borderRadius: '4px',
+                }}
+            >
+                {renderContent()}
             </div>
         </div>
     );

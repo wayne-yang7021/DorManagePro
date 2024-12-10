@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
   
       // Assuming the password is hashed in the database
       // const isPasswordValid = await bcrypt.compare(password, foundAdmin[0].ssn);
-      const isPasswardValid = password === foundAdmin[0].ssn
+      const isPasswordValid = password === foundAdmin[0].ssn
       if (!isPasswordValid) {
         return res.status(401).json({ message: 'Invalid password' });
       }

@@ -173,7 +173,7 @@ router.put('/cancel_facilities_reservations', async (req, res) => {
     const updateResult = await db
     .update(bookRecord)
     .set({ isCancelled: true })
-    .where(and(eq(bookRecord.ssn, ssn), eq(bookRecord.fId, fId), eq(bookRecord.bookTime, correctBooktime)));
+    .where(and(eq(bookRecord.ssn, ssn), eq(bookRecord.fid, fId), eq(bookRecord.bookTime, correctBooktime)));
 
     if (!updateResult) {
       return res.status(500).json({ error: 'Database did not return expected results' });
