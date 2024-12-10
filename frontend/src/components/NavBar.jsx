@@ -128,6 +128,17 @@ const Navbar = () => {
 
         <li>
           <a
+            href="/discussion_board"
+            style={styles.link}
+            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
+          >
+            Join discussion board
+          </a>
+        </li>
+
+        <li>
+          <a
             href="/user_information"
             style={styles.link}
             onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}

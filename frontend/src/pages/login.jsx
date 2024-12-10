@@ -39,8 +39,6 @@ const LoginPage = () => {
               Student ID
             </label>
             <input
-              type="email"
-              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={styles.input}

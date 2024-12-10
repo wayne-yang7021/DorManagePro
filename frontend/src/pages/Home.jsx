@@ -3,6 +3,7 @@ import Navbar from '../components/NavBar';
 import FacilityReservation from '../components/ReserveFacility';
 import SnackRegistration from '../components/SnackRegister';
 import FacilityMaintenanceForm from '../components/FacilityMaintenanceForm';
+import DiscussionBoard from './DiscussionBoard';
 
 import { useAuth } from "../context/authContext";
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +40,8 @@ function Home() {
                 return <SnackRegistration />;
             case 'facilityMaintenance':
                 return <FacilityMaintenanceForm />;
+            case 'discussionBoard':
+                return <DiscussionBoard />
             default:
                 return null;
         }
@@ -53,6 +56,7 @@ function Home() {
                     <nav style={{ flex: '1', display: 'flex', flexDirection: 'column', gap: '10px', backgroundColor: '#444', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
                         <button onClick={() => setActiveTab('facilityReservation')} style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'facilityReservation' ? '#007bff' : '#e9ecef', color: activeTab === 'facilityReservation' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Reserve Facility</button>
                         <button onClick={() => setActiveTab('snackRegistration')} style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'snackRegistration' ? '#007bff' : '#e9ecef', color: activeTab === 'snackRegistration' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Snack Registration</button>
+                        <button onClick={() => setActiveTab('discussionBoard')} style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'discussionBoard' ? '#007bff' : '#e9ecef', color: activeTab === 'discussionBoard' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Discussion Board</button>
                         <button onClick={() => setActiveTab('facilityMaintenance')} style={{ padding: '10px', border: 'none', backgroundColor: activeTab === 'facilityMaintenance' ? '#007bff' : '#e9ecef', color: activeTab === 'facilityMaintenance' ? '#fff' : '#000', borderRadius: '4px', cursor: 'pointer', transition: '0.3s' }}>Facility Maintenance</button>
                     </nav>
                     <div style={{ flex: '3', padding: '20px', backgroundColor: '#555', borderRadius: '8px', boxShadow: '3px 3px 10px rgba(0, 0, 0, 0.5)' }}>

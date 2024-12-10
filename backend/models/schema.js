@@ -77,17 +77,15 @@ const bookRecord = pgTable('book_record', {
   fid: uuid().defaultRandom().notNull().references(() => facility.fid), // 外鍵指向 FACILITY
   isCancelled: boolean('iscancelled').default(false),
   bookTime: timestamp('booktime').defaultNow(),
-}, (table) => [primaryKey([table.ssn, table.fid])]);
+}, (table) => [primaryKey([table.fid, table.bookTime])]);
 
-// const bookRecord = pgTable('book_record', {
-//   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // Foreign key to USER
-//   fid: uuid().defaultRandom().notNull().references(() => facility.fid), // Foreign key to FACILITY
-//   isCancelled: boolean('isCancelled').default(false),
-//   bookTime: timestamp('booktime').defaultNow(),
-//   // Define primary key directly in the column configuration
-// }, {
-//   primaryKey: ['ssn', 'fid'], // Primary key combining ssn and fid
-// });
+const discussionBoard = pgTable('discussion_board', {
+  mesid: uuid().defaultRandom().primaryKey(),
+  ssn: varchar('ssn', 100).notNull().references(() => user.ssn),
+  messages: varchar('messages', 500).notNull(),
+  dormId: varchar('dormid', 50).notNull(),
+  sentTime: timestamp('senttime').defaultNow(),
+})
 
 // MAINTENANCE_RECORD 表
 const maintenanceRecord = pgTable('maintenance_record', {
@@ -113,6 +111,7 @@ module.exports = {
   snackOption,
   facility,
   bookRecord,
+  discussionBoard,
   maintenanceRecord,
   semester
 };
