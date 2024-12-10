@@ -102,7 +102,7 @@ const Navbar = () => {
           <a
             href="/"
             style={styles.link}
-            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseEnter={(e) => (e.target.style.color = styles.link.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
             Home
@@ -112,7 +112,7 @@ const Navbar = () => {
           <a
             href="/about"
             style={styles.link}
-            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseEnter={(e) => (e.target.style.color = styles.link.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
             Apply for transfer
@@ -122,7 +122,7 @@ const Navbar = () => {
           <a
             href="/facility_reservation"
             style={styles.link}
-            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseEnter={(e) => (e.target.style.color = styles.link.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
             View facility reservation
@@ -133,7 +133,7 @@ const Navbar = () => {
           <a
             href="/discussion_board"
             style={styles.link}
-            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseEnter={(e) => (e.target.style.color = styles.link.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
             Join discussion board
@@ -144,7 +144,7 @@ const Navbar = () => {
           <a
             href="/user_information"
             style={styles.link}
-            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseEnter={(e) => (e.target.style.color = styles.link.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
           >
             {!loading && user ? user.studentId : "student id"}
@@ -155,7 +155,7 @@ const Navbar = () => {
           <a
             href="#"
             style={styles.link}
-            onMouseEnter={(e) => (e.target.style.color = styles.linkHover.color)}
+            onMouseEnter={(e) => (e.target.style.color = styles.link.color)}
             onMouseLeave={(e) => (e.target.style.color = styles.link.color)}
             onClick={handleLogout}
           >
