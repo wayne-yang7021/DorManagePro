@@ -228,7 +228,7 @@ const FacilityReservation = () => {
                 setCalendarVisible(false);
               }}
             >
-              {selectedFacility?.fid === facility.fid ? 'Selected' : 'Select Facility'}
+              {selectedFacility?.fid === facility.fid ? 'Facility Selected' : 'Select Facility'}
             </button>
             {selectedFacility?.fid === facility.fid && (
               <div>

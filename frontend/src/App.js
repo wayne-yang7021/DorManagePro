@@ -11,7 +11,7 @@ import LoginPage from './pages/login';
 import { MyProvider } from './context/context';
 import AdminLoginPage from './pages/AdminLoginPage';
 import FacilityReservationPage from './pages/FacilityResevation';
-import UserInformation from './pages/UserInformation';
+import UserInformationPage from './pages/UserInformationPage';
 import DiscussionBoard from './pages/DiscussionBoard';
 function App() {
     return (
@@ -31,7 +31,7 @@ function App() {
                             <Route path="/adminLogin" element={<AdminLoginPage/>} />
                             <Route path="/facility_reservation" element={<FacilityReservationPage/>} />
                             <Route path="/discussion_board" element={<DiscussionBoard />} />
-                            <Route path="/user_information" element={<UserInformation/>} />
+                            <Route path="/user_information" element={<UserInformationPage/>} />
                         </Routes>
                     </main>
                 </div>
