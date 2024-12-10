@@ -6,7 +6,7 @@ const cors = require('cors');
 const { getDb } = require('./models/index')
 const { user, bed, admin } = require('./models/schema'); // Import your user schema
 const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 const app = express();
 const secretKey = process.env.JWT_SECRET || 'your_very_secure_and_long_secret_key';
@@ -52,7 +52,8 @@ app.post('/api/login', async (req, res) => {
       }
 
       // Assuming the SSN is encrypted in the database, decrypt it here (use a suitable decryption method)
-      const isSSNValid = await bcrypt.compare(ssn, foundUser[0].ssn); // Assuming SSN is hashed/encrypted using bcrypt
+      // const isSSNValid = await bcrypt.compare(ssn, foundUser[0].ssn); // Assuming SSN is hashed/encrypted using bcrypt
+      const isSSNValid = (ssn === foundUser[0].ssn)
       if (!isSSNValid) {
           return res.status(401).json({ message: 'Invalid SSN' });
       }
