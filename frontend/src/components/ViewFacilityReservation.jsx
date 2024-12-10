@@ -82,7 +82,7 @@ function ViewFacilityReservation() {
                         {reservations
                             .filter(reservation => !reservation.isCancelled)
                             .map((reservation) => (
-                                <tr key={reservation.fid} style={styles.dataRow}>
+                                <tr key={[reservation.fid, reservation.bookTime]} style={styles.dataRow}>
                                     <td style={styles.td}>{reservation.fname}</td>
                                     <td style={styles.td}>{new Date(reservation.bookTime).toLocaleString()}</td>
                                     <td style={styles.td}>
