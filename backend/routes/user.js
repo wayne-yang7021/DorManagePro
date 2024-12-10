@@ -183,6 +183,7 @@ router.post('/bed_transfer_request', async (req, res) => {
         moveInBed: move_in_bed,
         originalBed: original_bed,
         dormId: dorm_id,
+        status: 'pending'
       })
     console.log(result)
     // Respond with success
@@ -193,31 +194,6 @@ router.post('/bed_transfer_request', async (req, res) => {
   } catch (err) {
     console.log(err.message)
     res.status(500).json({ error: err.message });
-  }
-});
-// Bed Transfer Request - 宿舍內轉更新
-router.put('/bed_transfer_update', async (req, res) => {
-  const { ssn, move_in_bed} = req.body;
-  try {
-    const db = getDb();
-    // Validate the input
-    if (!ssn || !move_in_bed) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    const updateResult = await db
-    .update(user)
-    .set({ bId: move_in_bed })
-    .where(eq(user.ssn, ssn));
-
-    if (!updateResult) {
-      return res.status(500).json({ error: 'Database did not return expected results' });
-    }
-
-    res.status(200).json({ message: 'Reservation cancelled successfully' });
-  } catch (error) {
-    console.error('Error cancelling reservation:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

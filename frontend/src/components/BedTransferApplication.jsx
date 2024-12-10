@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/authContext';
 import { useMyContext } from '../context/context';
 
 const BedTransferApplication = () => {
-  const { user } = useAuth();
-  const { applications } = useMyContext();
+  const { user, loading } = useAuth();
+  // const { applications } = useMyContext();
+  const [emptyBed, setEmptyBed] = useState([])
   const [selectedBed, setSelectedBed] = useState(null);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [error, setError] = useState(null);
@@ -14,33 +15,30 @@ const BedTransferApplication = () => {
   };
 
 
-  const dormData = [
-    { dorm_id: 'DORM02', b_id: '111A' },
-    { dorm_id: 'DORM02', b_id: '222B' },
-    { dorm_id: 'DORM02', b_id: '333C' },
-    { dorm_id: 'DORM02', b_id: '444D' },
-  ];
-
-//   const emptyBedSearch = async (e) => {
-//     e.preventDefault();
-
-//     try {
-//         const response = await fetch(
-//             `http://localhost:8888/api/admin/student_search?student_id=${studentId}&dorm_id=${admin.dorm_id}`
-//         );
+  const emptyBedSearch = async () => {
+    try {
+        const response = await fetch(
+            `http://localhost:8888/api/dorm/get_empty_bed_in_room?dorm_id=${user.dormId}`
+        );
         
-//         if (!response.ok) {
-//             throw new Error('Student not found');
-//         }
+        if (!response.ok) {
+            throw new Error('Student not found');
+        }
 
-//         const data = await response.json();
-//         setStudentData([data]); // 包裝成陣列以便渲染
-//         setError('');
-//     } catch (err) {
-//         setStudentData(null);
-//         setError(err.message || 'An error occurred');
-//     }
-// };
+        const data = await response.json();
+        setEmptyBed(data);
+        setError('');
+    } catch (err) {
+        setEmptyBed(null);
+        setError(err.message || 'An error occurred');
+    }
+  };
+
+  useEffect(() => {
+    if (user.dormId) {
+        emptyBedSearch(); // 頁面載入時自動執行
+    }
+}, [user.dormId]); // 確保 dormId 存在且變化時執行
 
   const handleSubmitApplication = async () => {
     if (!selectedBed) {
@@ -70,30 +68,6 @@ const BedTransferApplication = () => {
     } catch (err) {
       setError(err.message);
     }
-
-    // Do bed transfer update
-    setError(null);
-    try {
-      const response = await fetch(`http://localhost:8888/api/user/bed_transfer_update`, {
-          method: 'PUT',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            ssn: user.ssn, 
-            fmove_in_bed: selectedBed
-          }),
-      });
-
-      if (!response.ok) {
-          throw new Error('Failed to update application.');
-      }
-    } catch (err) {
-        console.error('Error updating application:', err);
-        setError(err.message);
-    }
-
   };
 
   return (
@@ -110,22 +84,22 @@ const BedTransferApplication = () => {
             <p style={{ textAlign: 'center', color: '#555' }}>Select the bed you wish to transfer to:</p>
             {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
-              {dormData.map((bed) => (
+              {emptyBed && emptyBed.map((bed) => (
                 <div
-                  key={bed.b_id}
+                  key={bed.bId}
                   style={{
-                    border: selectedBed === bed.b_id ? '2px solid #4CAF50' : '1px solid #ccc',
+                    border: selectedBed === bed.bId ? '2px solid #4CAF50' : '1px solid #ccc',
                     borderRadius: '8px',
                     padding: '15px',
                     cursor: 'pointer',
                     textAlign: 'center',
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    backgroundColor: selectedBed === bed.b_id ? '#f9fff9' : '#fff',
+                    backgroundColor: selectedBed === bed.bId ? '#f9fff9' : '#fff',
                     transition: 'all 0.3s ease',
                   }}
-                  onClick={() => handleBedSelection(bed.b_id)}
+                  onClick={() => handleBedSelection(bed.bId)}
                 >
-                  <h3 style={{ margin: '0 0 10px', color: '#333' }}>{bed.b_id}</h3>
+                  <h3 style={{ margin: '0 0 10px', color: '#333' }}>{bed.bId}</h3>
                 </div>
               ))}
             </div>
@@ -152,7 +126,7 @@ const BedTransferApplication = () => {
           </>
         )}
 
-        <div className="previous-applications">
+        {/* <div className="previous-applications">
           <h2>Your Previous Applications</h2>
           {applications.length === 0 ? (
             <p className="no-applications">No previous bed transfer applications found.</p>
@@ -176,7 +150,8 @@ const BedTransferApplication = () => {
               </tbody>
             </table>
           )}
-        </div>
+        </div> */}
+
       </div>
     </div>
   );
