@@ -56,8 +56,8 @@ router.post('/book', async (req, res) => {
       await tx.insert(bookRecord).values({
         ssn,
         fid: fId,
-        iscancelled: isCancelled,
-        booktime: new Date(bookTime), // Convert to a Date object
+        isCancelled: isCancelled,
+        bookTime: new Date(bookTime), // Convert to a Date object
       });
     });
 

@@ -1,7 +1,7 @@
 // 
 
 const { PrimaryKey, } = require('drizzle-orm/mysql-core');
-const { pgTable, varchar, text, boolean, timestamp, date, uuid } = require('drizzle-orm/pg-core');
+const { pgTable, varchar, text, boolean, timestamp, date, uuid, primaryKey } = require('drizzle-orm/pg-core');
 
 // ADMIN 表
 const admin = pgTable('admin', {
@@ -77,11 +77,7 @@ const bookRecord = pgTable('book_record', {
   fid: uuid().defaultRandom().notNull().references(() => facility.fid), // 外鍵指向 FACILITY
   isCancelled: boolean('iscancelled').default(false),
   bookTime: timestamp('booktime').defaultNow(),
-}, (table) => {
-  return{
-    bookRecord_pk: PrimaryKey([table.ssn, table.fid])
-  }
-});
+}, (table) => [primaryKey([table.ssn, table.fid])]);
 
 // const bookRecord = pgTable('book_record', {
 //   ssn: varchar('ssn', 100).notNull().references(() => user.ssn), // Foreign key to USER

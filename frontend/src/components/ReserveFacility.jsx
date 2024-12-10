@@ -106,7 +106,7 @@ const FacilityReservation = () => {
         },
         body: JSON.stringify({
           ssn: user.ssn,
-          fid: selectedFacility.fid,
+          fId: selectedFacility.fid,
           isCancelled: false,
           bookTime,
         }),

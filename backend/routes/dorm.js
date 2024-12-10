@@ -41,7 +41,7 @@ router.get('/facility_schedule', async (req, res) => {
       .from(bookRecord)
       .where(
         and(
-          eq(bookRecord.fId, facility_id),
+          eq(bookRecord.fid, facility_id),
           gte(bookRecord.bookTime, startOfDay),
           lte(bookRecord.bookTime, endOfDay)
         )
