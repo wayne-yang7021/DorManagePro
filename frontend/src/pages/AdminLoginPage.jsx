@@ -68,6 +68,7 @@ const styles = {
     },
     title: {
         marginBottom: '20px',
+        color: 'black'
     },
     form: {
         display: 'flex',

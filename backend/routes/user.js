@@ -202,14 +202,32 @@ router.post('/dorm_change_request', async (req, res) => {
     const db = getDb();
     const { ssn, move_to, semester } = req.body;
     console.log('data', ssn, move_to, semester)
-    const result = await db
-      .insert(moveApplication)
-      .values({
-        ssn,
-        semester,
-        dormId: move_to,
-        status: "pending",
-      })
+// Check if the application already exists
+const existingApplication = await db
+  .select()
+  .from(moveApplication)
+  .where(
+    eq(moveApplication.ssn, ssn),
+    eq(moveApplication.semester, semester),
+    eq(moveApplication.dormId, move_to)
+  )
+  .limit(1)
+  .execute();
+
+if (existingApplication.length > 0) {
+  console.log('Application already exists.');
+} else {
+  // Insert a new record if it doesn't exist
+  const result = await db
+    .insert(moveApplication)
+    .values({
+      ssn,
+      semester,
+      dormId: move_to,
+      status: "pending",
+    })
+    .execute();
+}
     console.log(result)
     // Respond with success
     res.status(201).json({
