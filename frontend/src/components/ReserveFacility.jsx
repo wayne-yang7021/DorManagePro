@@ -208,7 +208,6 @@ const FacilityReservation = () => {
             }}>
               {facility.fName}
             </h2>
-            <p style={{ margin: '5px 0' }}>For Rent: {facility.forRent ? 'Yes' : 'No'}</p>
             <p style={{ margin: '5px 0' }}>Under Maintenance: {facility.underMaintenance ? 'Yes' : 'No'}</p>
             <button
               style={{

@@ -29,8 +29,8 @@ function PostForm() {
             const data = await response.json();
             console.log('Post successful:', data);
 
-            // 刷新頁面
-            window.location.reload(); // 使用此方式刷新整個頁面
+            // Refresh the page
+            window.location.reload();
         } catch (err) {
             console.log("Error while posting: ", err.message);
         }
@@ -38,63 +38,83 @@ function PostForm() {
 
     return (
         <div style={styles.container}>
-            <form onSubmit={handleSubmit} style={styles.form}>
-                <textarea
-                    placeholder="Write something..."
-                    value={postText}
-                    onChange={(e) => setPostText(e.target.value)}
-                    style={styles.textarea}
-                    rows="3"
-                ></textarea>
-                <button type="submit" style={styles.button}>
-                    Post
-                </button>
-            </form>
+            <div style={styles.window}>
+                <div style={styles.titleBar}>
+                    <span style={styles.title}>New Post</span>
+                </div>
+                <form onSubmit={handleSubmit} style={styles.form}>
+                    <textarea
+                        placeholder="Write something..."
+                        value={postText}
+                        onChange={(e) => setPostText(e.target.value)}
+                        style={styles.textarea}
+                        rows="5"
+                    ></textarea>
+                    <button type="submit" style={styles.button}>
+                        Post
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }
 
-// CSS-in-JS Styles
+// CSS-in-JS Styles for Windows XP look
 const styles = {
     container: {
         display: 'flex',
         justifyContent: 'center',
+        fontFamily: 'Tahoma, Geneva, sans-serif',
+    },
+    window: {
+        width: '400px',
+        backgroundColor: '#E1E1E1', // Soft gray background for window
+        border: '2px solid #5A5A5A', // Border similar to window frames
+        borderRadius: '4px',
+        boxShadow: 'inset 1px 1px 8px rgba(255, 255, 255, 0.5), 4px 4px 10px rgba(0, 0, 0, 0.5)',
+    },
+    titleBar: {
+        backgroundColor: '#6C6C6C', // Darker title bar
+        padding: '4px 10px',
+        color: '#FFFFFF',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        borderTopLeftRadius: '4px',
+        borderTopRightRadius: '4px',
+        display: 'flex',
         alignItems: 'center',
-        height: '30vh', // Full height to center vertically
-        // backgroundColor: '#f4f4f4', // Light background for the page
+        justifyContent: 'space-between',
+    },
+    title: {
+        fontSize: '14px',
+        fontWeight: 'bold',
     },
     form: {
-        width: '40%', // Form width
-        backgroundColor: '#ffffff', // Form background
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 3px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        padding: '10px',
     },
     textarea: {
-        width: '100%', // Full width of the form
-        padding: '15px',
-        fontSize: '16px',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
+        width: '100%',
+        height: '100px',
+        padding: '10px',
+        fontSize: '14px',
+        border: '1px solid #A5A5A5',
+        borderRadius: '3px',
         boxSizing: 'border-box',
-        marginBottom: '20px', // Space between textarea and button
-        resize: 'none', // Prevent resizing
+        marginBottom: '10px',
+        resize: 'none',
     },
     button: {
-        padding: '12px 30px',
-        fontSize: '16px',
-        backgroundColor: '#007BFF',
-        color: '#ffffff',
-        border: 'none',
-        borderRadius: '4px',
+        padding: '8px 20px',
+        fontSize: '14px',
+        backgroundColor: '#C0C0C0', // Classic gray button color
+        color: '#000000',
+        border: '1px solid #5A5A5A',
+        borderRadius: '3px',
         cursor: 'pointer',
-        transition: 'background-color 0.3s ease',
+        fontFamily: 'Tahoma, Geneva, sans-serif',
     },
     buttonHover: {
-        backgroundColor: '#0056b3', // Darker blue on hover
+        backgroundColor: '#A0A0A0', // Darker gray when hovered
     },
 };
 

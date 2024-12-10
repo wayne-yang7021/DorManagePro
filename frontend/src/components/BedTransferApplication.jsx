@@ -4,8 +4,7 @@ import { useMyContext } from '../context/context';
 
 const BedTransferApplication = () => {
   const { user, loading } = useAuth();
-  // const { applications } = useMyContext();
-  const [emptyBed, setEmptyBed] = useState([])
+  const [emptyBed, setEmptyBed] = useState([]);
   const [selectedBed, setSelectedBed] = useState(null);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [error, setError] = useState(null);
@@ -14,31 +13,30 @@ const BedTransferApplication = () => {
     setSelectedBed(bedId === selectedBed ? null : bedId); // Deselect if already selected
   };
 
-
   const emptyBedSearch = async () => {
     try {
-        const response = await fetch(
-            `http://localhost:8888/api/dorm/get_empty_bed_in_room?dorm_id=${user.dormId}`
-        );
-        
-        if (!response.ok) {
-            throw new Error('Student not found');
-        }
+      const response = await fetch(
+        `http://localhost:8888/api/dorm/get_empty_bed_in_room?dorm_id=${user.dormId}`
+      );
+      
+      if (!response.ok) {
+        throw new Error('Student not found');
+      }
 
-        const data = await response.json();
-        setEmptyBed(data);
-        setError('');
+      const data = await response.json();
+      setEmptyBed(data);
+      setError('');
     } catch (err) {
-        setEmptyBed(null);
-        setError(err.message || 'An error occurred');
+      setEmptyBed(null);
+      setError(err.message || 'An error occurred');
     }
   };
 
   useEffect(() => {
     if (user) {
-        emptyBedSearch(); // 頁面載入時自動執行
+      emptyBedSearch(); // Execute on page load
     }
-}, [user]); // 確保 dormId 存在且變化時執行
+  }, [user]); // Ensure dormId is available and triggers when it changes
 
   const handleSubmitApplication = async () => {
     if (!selectedBed) {
@@ -55,7 +53,7 @@ const BedTransferApplication = () => {
           move_in_bed: selectedBed,
           original_bed: user.bId,
           semester: '113-1',
-          dorm_id: user.dormId
+          dorm_id: user.dormId,
         }),
       });
 
@@ -71,53 +69,34 @@ const BedTransferApplication = () => {
   };
 
   return (
-    <div className="reservation-container">
-      <h1>Bed Transfer Application</h1>
+    <div className="reservation-container" style={styles.container}>
+      <h1 style={styles.header}>Bed Transfer Application</h1>
 
-      <div className="transfer-application-wrapper">
+      <div className="transfer-application-wrapper" style={styles.wrapper}>
         {applicationSubmitted ? (
-          <div style={{ color: 'green', textAlign: 'center', fontSize: '18px', marginTop: '20px' }}>
-            Application submitted successfully!
-          </div>
+          <div style={styles.successMessage}>Application submitted successfully!</div>
         ) : (
           <>
-            <p style={{ textAlign: 'center', color: '#555' }}>Select the bed you wish to transfer to:</p>
-            {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+            <p style={styles.instruction}>Select the bed you wish to transfer to:</p>
+            {error && <p style={styles.errorMessage}>{error}</p>}
+            <div style={styles.bedGrid}>
               {emptyBed && emptyBed.map((bed) => (
                 <div
                   key={bed.bId}
                   style={{
-                    border: selectedBed === bed.bId ? '2px solid #4CAF50' : '1px solid #ccc',
-                    borderRadius: '8px',
-                    padding: '15px',
-                    cursor: 'pointer',
-                    textAlign: 'center',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    backgroundColor: selectedBed === bed.bId ? '#f9fff9' : '#fff',
-                    transition: 'all 0.3s ease',
+                    ...styles.bedItem,
+                    border: selectedBed === bed.bId ? '2px solid black' : '1px solid #ccc',
+                    backgroundColor: selectedBed === bed.bId ? 'gray' : '#fff',
                   }}
                   onClick={() => handleBedSelection(bed.bId)}
                 >
-                  <h3 style={{ margin: '0 0 10px', color: '#333' }}>{bed.bId}</h3>
+                  <h3 style={styles.bedId}>{bed.bId}</h3>
                 </div>
               ))}
             </div>
             <button
               onClick={handleSubmitApplication}
-              style={{
-                marginTop: '30px',
-                padding: '12px 20px',
-                backgroundColor: '#4CAF50',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                fontSize: '16px',
-                width: '100%',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                transition: 'background-color 0.3s ease',
-              }}
+              style={styles.submitButton}
               onMouseOver={(e) => (e.target.style.backgroundColor = '#45a049')}
               onMouseOut={(e) => (e.target.style.backgroundColor = '#4CAF50')}
             >
@@ -125,36 +104,80 @@ const BedTransferApplication = () => {
             </button>
           </>
         )}
-
-        {/* <div className="previous-applications">
-          <h2>Your Previous Applications</h2>
-          {applications.length === 0 ? (
-            <p className="no-applications">No previous bed transfer applications found.</p>
-          ) : (
-            <table className="applications-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Bed ID</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {applications.map((application) => (
-                  <tr key={application.apply_id}>
-                    <td>{new Date(application.applyTime).toLocaleDateString()}</td>
-                    <td>{application.dormId}</td>
-                    <td>{application.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div> */}
-
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    width: '80%',
+    maxWidth: '900px',
+    margin: '0 auto',
+    backgroundColor: '#c0c0c0',
+    border: '2px solid #000',
+    borderRadius: '5px',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.5)',
+    backgroundColor: '#e5e5e5',
+  },
+  header: {
+    textAlign: 'center',
+    fontSize: '24px',
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  wrapper: {
+    marginTop: '20px',
+  },
+  successMessage: {
+    color: 'green',
+    textAlign: 'center',
+    fontSize: '18px',
+    marginTop: '20px',
+  },
+  instruction: {
+    textAlign: 'center',
+    color: '#555',
+  },
+  errorMessage: {
+    color: 'red',
+    textAlign: 'center',
+  },
+  bedGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+    gap: '20px',
+    marginTop: '20px',
+    maxHeight: '400px',
+    overflowY: 'auto',
+    padding: '10px',
+  },
+  bedItem: {
+    borderRadius: '8px',
+    padding: '15px',
+    cursor: 'pointer',
+    textAlign: 'center',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#fff',
+    transition: 'all 0.3s ease',
+  },
+  bedId: {
+    margin: '0 0 10px',
+    color: '#333',
+    fontSize: '18px',
+  },
+
+  submitButton: {
+    backgroundColor: '#c3c7cb',
+    color: '#000',
+    width: 'max-width',
+    padding: '5px 10px',
+    border: '2px outset #c3c7cb',
+    cursor: 'pointer',
+    boxShadow: 'inset -1px -1px 1px #808080, inset 1px 1px 1px white',
+  },
 };
 
 export default BedTransferApplication;

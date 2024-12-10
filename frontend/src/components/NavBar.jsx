@@ -21,7 +21,7 @@ const Navbar = () => {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      padding: "5px 20px",
+      padding: "20px 20px",
       background: "#e4e4e",
       border: "2px groove #c3c7cb",
       fontFamily: "Tahoma, sans-serif",
