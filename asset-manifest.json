@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/dormanagepro/static/css/main.5d00fc58.css",
+    "main.js": "/dormanagepro/static/js/main.884e5723.js",
+    "static/js/453.6f5fbf05.chunk.js": "/dormanagepro/static/js/453.6f5fbf05.chunk.js",
+    "index.html": "/dormanagepro/index.html",
+    "main.5d00fc58.css.map": "/dormanagepro/static/css/main.5d00fc58.css.map",
+    "main.884e5723.js.map": "/dormanagepro/static/js/main.884e5723.js.map",
+    "453.6f5fbf05.chunk.js.map": "/dormanagepro/static/js/453.6f5fbf05.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5d00fc58.css",
+    "static/js/main.884e5723.js"
+  ]
+}
